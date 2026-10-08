@@ -1,0 +1,619 @@
+/* ========================================================================
+   CAMPUSFLOW — AURORA CAMPUS VISUAL SYSTEM
+   Premium, moderate-futuristic UI layer. No flat white application canvas.
+   ======================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+  --background: #07111f;
+  --surface: rgba(15, 27, 46, 0.76);
+  --surface-soft: rgba(20, 35, 57, 0.72);
+  --surface-blue: rgba(31, 48, 83, 0.7);
+  --surface-purple: rgba(49, 35, 79, 0.64);
+  --text-primary: #f6f8fc;
+  --text-secondary: #a7b4c8;
+  --text-muted: #718097;
+  --border: rgba(148, 163, 184, 0.14);
+  --border-strong: rgba(148, 163, 184, 0.24);
+  --primary: #6875f5;
+  --primary-dark: #4f46e5;
+  --primary-light: rgba(99, 102, 241, 0.14);
+  --secondary: #22c7e6;
+  --secondary-light: rgba(34, 199, 230, 0.12);
+  --font: 'Manrope', system-ui, sans-serif;
+  --heading-font: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+  --glass: rgba(11, 24, 41, 0.68);
+  --glass-strong: rgba(17, 32, 54, 0.88);
+  --glass-border: rgba(190, 207, 230, 0.13);
+  --shadow-glass: 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  position: relative;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(99, 102, 241, 0.20), transparent 31rem),
+    radial-gradient(circle at 88% 10%, rgba(34, 199, 230, 0.12), transparent 28rem),
+    radial-gradient(circle at 52% 85%, rgba(124, 58, 237, 0.10), transparent 34rem),
+    #07111f;
+  color: var(--text-primary);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  width: 30rem;
+  height: 30rem;
+  left: 50%;
+  top: 18%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(79, 70, 229, 0.06);
+  filter: blur(80px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--heading-font);
+  color: var(--text-primary);
+}
+
+p { color: var(--text-secondary); }
+
+/* Public shell */
+.navbar {
+  background: rgba(7, 17, 31, 0.70) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+.navbar .nav-link { color: #aebbd0; }
+.navbar .nav-link:hover,
+.navbar .nav-link.is-active { color: #fff; }
+
+.card,
+.panel,
+.feature-card,
+.club-card,
+.event-card,
+.stat-card,
+.login-card {
+  background: linear-gradient(145deg, rgba(20, 36, 59, 0.78), rgba(10, 22, 38, 0.66)) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--shadow-glass) !important;
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+.card:hover,
+.event-card:hover,
+.feature-card:hover,
+.club-card:hover {
+  border-color: rgba(132, 145, 255, 0.28) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 28px 80px rgba(0,0,0,0.28) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  box-shadow: 0 10px 28px rgba(79,70,229,0.28) !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7377ff, #5b52ef) !important;
+  box-shadow: 0 14px 34px rgba(79,70,229,0.38) !important;
+}
+
+.btn-outline,
+.btn-ghost {
+  color: #dbe5f5 !important;
+  border-color: rgba(148,163,184,0.22) !important;
+  background: rgba(255,255,255,0.035) !important;
+}
+
+.btn-outline:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(99,102,241,0.12) !important;
+  border-color: rgba(129,140,248,0.34) !important;
+}
+
+.section-alt {
+  background: rgba(10, 22, 38, 0.50) !important;
+  border-color: rgba(148,163,184,0.08) !important;
+}
+
+.footer {
+  background: rgba(4, 11, 21, 0.82) !important;
+  border-top: 1px solid rgba(148,163,184,0.10) !important;
+}
+
+/* Event discovery */
+.search-field,
+.field input,
+.field select,
+.field textarea,
+.topbar-search,
+.chip,
+.select-row select {
+  background: rgba(255,255,255,0.045) !important;
+  border-color: rgba(148,163,184,0.18) !important;
+  color: #edf3fc !important;
+}
+
+.field input::placeholder,
+.field textarea::placeholder,
+.search-field input::placeholder,
+.topbar-search input::placeholder { color: #718097 !important; }
+
+.chip.is-active {
+  background: linear-gradient(135deg, rgba(99,102,241,0.92), rgba(79,70,229,0.88)) !important;
+  border-color: transparent !important;
+  color: white !important;
+}
+
+.chip-scroll-hint {
+  background: rgba(11,24,41,0.96) !important;
+  border-color: rgba(148,163,184,0.20) !important;
+  color: #cdd7ea !important;
+}
+
+/* Dashboard shell */
+.dash {
+  background: transparent;
+}
+
+.sidebar {
+  background: rgba(7, 17, 31, 0.82) !important;
+  border-right: 1px solid var(--glass-border) !important;
+  backdrop-filter: blur(22px) saturate(130%);
+  -webkit-backdrop-filter: blur(22px) saturate(130%);
+  box-shadow: 18px 0 50px rgba(0,0,0,0.12);
+}
+
+.sidebar-head,
+.sidebar-foot {
+  border-color: rgba(148,163,184,0.10) !important;
+}
+
+.sidebar-link { color: #93a2b8 !important; }
+.sidebar-link:hover { background: rgba(99,102,241,0.10) !important; color: #dfe6f4 !important; }
+.sidebar-link.is-active {
+  background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(34,199,230,0.10)) !important;
+  border: 1px solid rgba(129,140,248,0.18);
+  color: #fff !important;
+}
+
+.sidebar-heading { color: #64748b !important; }
+
+.topbar {
+  background: rgba(7,17,31,0.68) !important;
+  border-bottom: 1px solid rgba(148,163,184,0.10) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.dash-content { color: var(--text-primary); }
+
+.page-head p,
+.panel-sub,
+.result-count,
+.events-total,
+.field-hint,
+.cell-note { color: var(--text-secondary) !important; }
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  right: -45px;
+  top: -45px;
+  border-radius: 50%;
+  background: rgba(99,102,241,0.12);
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.table-wrap { border-radius: 14px; }
+.table th { color: #8190a7 !important; border-color: rgba(148,163,184,0.10) !important; }
+.table td { border-color: rgba(148,163,184,0.09) !important; color: #dbe4f2; }
+.table tbody tr:hover { background: rgba(99,102,241,0.055) !important; }
+
+/* Modals and dropdowns */
+.modal,
+.modal-content,
+.dropdown,
+.profile-menu,
+.notification-dropdown {
+  background: rgba(12, 26, 44, 0.96) !important;
+  border-color: rgba(148,163,184,0.18) !important;
+  color: #edf3fc !important;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.40) !important;
+  backdrop-filter: blur(24px);
+}
+
+/* Login */
+.login {
+  background:
+    radial-gradient(circle at 10% 20%, rgba(99,102,241,0.24), transparent 28rem),
+    radial-gradient(circle at 90% 75%, rgba(34,199,230,0.13), transparent 26rem),
+    #07111f !important;
+}
+
+.login-brand {
+  background: linear-gradient(145deg, rgba(20,35,60,0.94), rgba(7,17,31,0.98)) !important;
+}
+
+.login-panel { background: transparent !important; }
+.login-card { border-radius: 24px !important; }
+.login-card input,
+.login-card select {
+  background: rgba(255,255,255,0.045) !important;
+  border-color: rgba(148,163,184,0.18) !important;
+  color: #f4f7fb !important;
+}
+
+/* Dashboard page headings */
+.dash-page > .page-head h1 {
+  letter-spacing: -0.045em;
+}
+
+/* Hero accents */
+.hero {
+  background:
+    radial-gradient(circle at 72% 32%, rgba(99,102,241,0.16), transparent 28rem),
+    transparent !important;
+}
+
+.hero-pill {
+  background: rgba(99,102,241,0.10) !important;
+  border-color: rgba(129,140,248,0.20) !important;
+  color: #c9d0ff !important;
+}
+
+.hero h1 span { color: #7c83ff !important; }
+
+/* Reduce excessive glass on mobile and preserve performance */
+@media (max-width: 768px) {
+  .card,
+  .panel,
+  .feature-card,
+  .club-card,
+  .event-card,
+  .stat-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .navbar { backdrop-filter: blur(16px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .event-card,
+  .feature-card,
+  .club-card {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+
+/* ========================================================================
+   AURORA HOME / EVENT READABILITY FIXES
+   Keep legacy white-card declarations from washing out the dark UI.
+   ======================================================================== */
+
+.preview-card,
+.hero-stat,
+.feature-card,
+.category-card,
+.how-step,
+.club-card,
+.event-card,
+.event-card-body {
+  color: var(--text-primary) !important;
+  background: linear-gradient(145deg, rgba(20, 36, 59, 0.88), rgba(10, 22, 38, 0.76)) !important;
+  border-color: var(--glass-border) !important;
+  box-shadow: var(--shadow-glass) !important;
+}
+
+.hero-stat:hover,
+.category-card:hover,
+.how-step:hover,
+.club-card:hover,
+.feature-card:hover {
+  background: linear-gradient(145deg, rgba(25, 43, 70, 0.94), rgba(12, 27, 46, 0.84)) !important;
+}
+
+.preview-card h3,
+.preview-card .preview-name,
+.hero-stat dd,
+.feature-card h3,
+.category-card h3,
+.how-step h3,
+.club-card h3,
+.event-card-title,
+.event-card-title a {
+  color: #f6f8fc !important;
+}
+
+.preview-card p,
+.preview-card li,
+.preview-small,
+.hero-stat dt,
+.feature-card p,
+.category-card p,
+.how-step > p,
+.club-card p,
+.event-meta,
+.event-progress p,
+.event-card-body .panel-sub {
+  color: #b8c4d6 !important;
+}
+
+.event-card-body .btn-outline {
+  background: rgba(255,255,255,0.045) !important;
+  border-color: rgba(148,163,184,0.22) !important;
+  color: #dbe5f5 !important;
+}
+
+.event-card-body .btn-outline:hover {
+  background: rgba(99,102,241,0.12) !important;
+  border-color: rgba(129,140,248,0.34) !important;
+  color: #ffffff !important;
+}
+
+.how-step .how-marker svg,
+.preview-flow li > svg {
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.18));
+}
+
+/* Poster-style event artwork when no uploaded poster exists. */
+.event-visual {
+  position: relative;
+  min-height: 176px;
+  isolation: isolate;
+}
+
+.event-visual-poster-copy {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  min-height: 176px;
+  padding: 22px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  color: #fff;
+  text-align: left;
+}
+
+.event-visual-kicker {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  opacity: 0.76;
+}
+
+.event-visual-icon {
+  margin: 2px 0 1px;
+  opacity: 0.96;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.2));
+}
+
+.event-visual-category {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.84;
+}
+
+.event-visual-title {
+  max-width: 88%;
+  font-family: var(--heading-font);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #fff !important;
+  text-wrap: balance;
+  text-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.event-visual-footer {
+  position: absolute;
+  z-index: 4;
+  left: 22px;
+  bottom: 12px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.72);
+}
+
+.event-visual-poster img {
+  filter: saturate(1.03) contrast(1.02);
+}
+
+@media (max-width: 640px) {
+  .event-visual-md,
+  .event-visual-poster-copy {
+    min-height: 190px;
+  }
+
+  .event-visual-poster-copy {
+    padding: 20px 18px 28px;
+  }
+
+  .event-visual-footer {
+    left: 18px;
+  }
+
+  .event-visual-title {
+    max-width: 92%;
+    font-size: 18px;
+  }
+}
+
+/* ========================================================================
+   PUBLIC HOME CONTRAST FIXES
+   Keep the Aurora Campus visual language consistent across every section.
+   ======================================================================== */
+
+.home-page,
+main {
+  color: var(--text-primary);
+}
+
+/* Sections that were still using the legacy light theme */
+.section,
+.page-section {
+  background: transparent;
+}
+
+.category-card,
+.club-card {
+  background: linear-gradient(145deg, rgba(20, 36, 59, 0.80), rgba(10, 22, 38, 0.68)) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-glass) !important;
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+.category-card:hover,
+.club-card:hover {
+  background: linear-gradient(145deg, rgba(25, 43, 70, 0.88), rgba(12, 27, 46, 0.78)) !important;
+  border-color: rgba(132, 145, 255, 0.28) !important;
+}
+
+.category-card h3,
+.club-card h3,
+.category-card p,
+.club-card p,
+.club-card .text-link {
+  position: relative;
+  z-index: 2;
+}
+
+.category-card h3,
+.club-card h3 {
+  color: #f6f8fc !important;
+}
+
+.category-card p,
+.club-card p {
+  color: #b8c4d6 !important;
+}
+
+/* Main How It Works section: remove the legacy white canvas that caused
+   white headings and text to disappear on mobile. */
+.how {
+  background:
+    radial-gradient(circle at 90% 15%, rgba(79, 70, 229, 0.14), transparent 30%),
+    radial-gradient(circle at 10% 85%, rgba(34, 199, 230, 0.06), transparent 28%),
+    rgba(7, 17, 31, 0.72) !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.10) !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.10) !important;
+}
+
+.how h2 {
+  color: #f6f8fc !important;
+}
+
+.how-lifecycle {
+  color: #aebbd0 !important;
+}
+
+.how-step {
+  background: linear-gradient(145deg, rgba(20, 36, 59, 0.82), rgba(10, 22, 38, 0.72)) !important;
+  border-color: rgba(190, 207, 230, 0.13) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.20) !important;
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+.how-step:hover {
+  background: linear-gradient(145deg, rgba(25, 43, 70, 0.90), rgba(12, 27, 46, 0.80)) !important;
+  border-color: rgba(132, 145, 255, 0.28) !important;
+}
+
+.how-step h3 {
+  color: #f6f8fc !important;
+}
+
+.how-step > p {
+  color: #b8c4d6 !important;
+}
+
+.how-number {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #22b9d7 !important;
+}
+
+/* Keep the connector visible against the dark section. */
+.how-steps::before {
+  opacity: 0.55;
+}
+
+/* Better contrast for the home page's generic section headers. */
+.section .section-header h2,
+.section .section-header p,
+.section > .container > h2,
+.section > .container > p {
+  color: inherit;
+}
+
+.section .section-header p,
+.section > .container > p {
+  color: #aebbd0 !important;
+}
+
+@media (max-width: 640px) {
+  .how {
+    padding: 72px 0;
+  }
+
+  .how h2 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+
+  .how-lifecycle {
+    font-size: 15px;
+  }
+
+  .how-step {
+    min-height: 165px;
+  }
+}

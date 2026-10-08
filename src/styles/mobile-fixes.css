@@ -1,0 +1,448 @@
+/* =========================================================
+   CAMPUSFLOW MOBILE / PUBLIC POLISH
+
+   Loaded last so these rules safely override the existing
+   responsive rules without replacing the design system.
+   ========================================================= */
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search-field {
+  position: relative;
+  min-width: 0;
+}
+
+.search-field input {
+  min-width: 0;
+  padding-left: 54px;
+  padding-right: 16px;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-field input::-webkit-search-decoration,
+.search-field input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-results-button,
+.search-field input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+
+/* =========================================================
+   CATEGORY CHIPS
+   ========================================================= */
+
+.chip-row-shell {
+  position: relative;
+  min-width: 0;
+}
+
+.chip-scroll-hint {
+  display: none;
+}
+
+
+/* =========================================================
+   MOBILE DRAWER
+   ========================================================= */
+
+@media (max-width: 860px) {
+
+  .drawer-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+
+    scrollbar-width: thin;
+  }
+
+  .drawer-section + .drawer-section {
+    margin-top: 22px;
+  }
+
+  .drawer-section-title {
+    margin: 0 8px 8px;
+
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+
+    text-transform: uppercase;
+  }
+
+  .drawer-section-heading {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+  }
+
+  .drawer-section-heading
+  .drawer-section-title {
+    margin-bottom: 8px;
+  }
+
+  .drawer-section-note {
+    margin-bottom: 8px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+  }
+
+  /* ---------- Verify certificate ---------- */
+
+  .drawer-links-utility {
+    gap: 4px;
+  }
+
+  .drawer-tool-link {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 46px;
+
+    padding: 12px 14px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    color: var(--text-secondary);
+
+    font-size: 15px;
+    font-weight: 650;
+
+    transition:
+      color var(--transition),
+      border-color var(--transition),
+      background var(--transition);
+  }
+
+  .drawer-tool-link svg {
+    flex-shrink: 0;
+
+    color: var(--secondary);
+  }
+
+  .drawer-tool-link:hover,
+  .drawer-tool-link.is-active {
+    border-color: #bfdbfe;
+
+    background: #eff6ff;
+
+    color: var(--primary);
+  }
+
+
+  /* ---------- Dashboard links ---------- */
+
+  .drawer-dashboard-grid {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 7px;
+  }
+
+  .drawer-dashboard-link {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 44px;
+
+    padding: 10px 13px;
+
+    border-radius: 11px;
+
+    background:
+      rgba(239, 246, 255, 0.72);
+
+    color: var(--primary);
+
+    font-size: 14px;
+    font-weight: 650;
+
+    transition:
+      background var(--transition),
+      transform var(--transition);
+  }
+
+  .drawer-dashboard-link:hover {
+    background: #dbeafe;
+
+    transform: translateX(2px);
+  }
+
+  .drawer-dashboard-link svg {
+    flex-shrink: 0;
+
+    color: var(--secondary);
+  }
+}
+
+
+/* =========================================================
+   MOBILE PUBLIC PAGES
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  /* ---------- Category chips ---------- */
+
+  .chip-row-shell {
+    margin: 0 -16px;
+  }
+
+  .chip-row {
+    flex-wrap: nowrap;
+
+    overflow-x: auto;
+
+    gap: 8px;
+
+    margin: 0;
+
+    padding-left: 16px;
+    padding-right: 54px;
+    padding-bottom: 4px;
+
+    scroll-padding-inline: 16px;
+
+    scrollbar-width: none;
+
+    -ms-overflow-style: none;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chip-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip {
+    flex: 0 0 auto;
+  }
+
+
+  /*
+   * Floating arrow.
+   *
+   * It sits over the right edge of the category row
+   * and DOES NOT create another line.
+   */
+
+  .chip-scroll-hint {
+    position: absolute;
+
+    top: 50%;
+    right: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid #dbe5f0;
+
+    border-right: 0;
+
+    border-radius:
+      18px 0 0 18px;
+
+    background:
+      rgba(255, 255, 255, 0.96);
+
+    box-shadow:
+      -5px 0 12px
+      rgba(15, 23, 42, 0.08);
+
+    color: var(--primary);
+
+    transform:
+      translateY(-50%);
+
+    pointer-events: none;
+
+    z-index: 5;
+  }
+
+  .chip-scroll-hint svg {
+    width: 17px;
+    height: 17px;
+  }
+
+
+  /* =======================================================
+     FEATURE CARDS
+     ======================================================= */
+
+  .feature-card {
+    min-height: 180px;
+
+    padding: 18px;
+  }
+
+  .feature-top {
+    min-height: 44px;
+
+    margin-bottom: 14px;
+  }
+
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+
+    border-radius: 13px;
+  }
+
+  .feature-arrow {
+    width: 31px;
+    height: 31px;
+
+    font-size: 15px;
+  }
+
+  .feature-card p {
+    margin-top: 7px;
+
+    line-height: 1.52;
+  }
+
+  .feature-link {
+    padding-top: 12px;
+
+    font-size: 13px;
+  }
+
+
+  /* =======================================================
+     CLUB CARDS
+     ======================================================= */
+
+  .club-card {
+    min-height: 0;
+
+    padding: 17px 18px;
+  }
+
+  .club-icon {
+    width: 42px;
+    height: 42px;
+
+    margin-bottom: 11px;
+
+    border-radius: 13px;
+  }
+
+  .club-card p {
+    margin-top: 5px;
+
+    line-height: 1.5;
+  }
+
+  .club-card .text-link {
+    padding-top: 10px;
+  }
+
+
+  /* =======================================================
+     FOOTER
+     ======================================================= */
+
+  .footer {
+    padding-top: 38px;
+  }
+
+  .footer-top {
+    align-items: flex-start;
+
+    gap: 24px;
+  }
+
+  .footer-brand p {
+    margin-top: 7px;
+
+    font-size: 14px;
+  }
+
+  /*
+   * Two-column mobile footer.
+   */
+
+  .footer-links {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 2px 18px;
+
+    width: 100%;
+  }
+
+  .footer-links a {
+    padding: 5px 0;
+
+    font-size: 14px;
+  }
+
+  .footer-bottom {
+    margin-top: 22px;
+
+    padding-top: 15px;
+    padding-bottom: 22px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+  .chip-row-shell {
+    margin-left: -14px;
+    margin-right: -14px;
+  }
+
+  .chip-row {
+    padding-left: 14px;
+    padding-right: 50px;
+
+    scroll-padding-inline: 14px;
+  }
+
+  .footer-links {
+    column-gap: 14px;
+  }
+}
