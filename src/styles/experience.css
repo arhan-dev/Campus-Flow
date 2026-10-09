@@ -617,3 +617,482 @@ main {
     min-height: 165px;
   }
 }
+
+/* ========================================================================
+   FINAL PUBLIC MOBILE CONTRAST + EVENT POSTER FIX
+   Loaded last so these rules win over legacy public-page styles.
+   ======================================================================== */
+
+/* ---------- Generated event poster ---------- */
+.event-visual-poster-copy {
+  position: relative !important;
+  z-index: 3 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 22px 20px 28px 88px !important;
+  text-align: center !important;
+  pointer-events: none;
+}
+
+.event-visual-kicker {
+  display: block !important;
+  max-width: 100% !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  color: rgba(255,255,255,0.82) !important;
+  opacity: 1 !important;
+}
+
+.event-visual-icon {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  color: #fff !important;
+  opacity: 0.96 !important;
+  filter: drop-shadow(0 5px 12px rgba(15,23,42,0.18)) !important;
+}
+
+.event-visual-category {
+  display: block !important;
+  max-width: 100% !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.13em !important;
+  text-transform: uppercase !important;
+  color: rgba(255,255,255,0.9) !important;
+  opacity: 1 !important;
+}
+
+.event-visual-title {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+  font-family: var(--heading-font) !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.025em !important;
+  color: #fff !important;
+  text-shadow: 0 2px 8px rgba(15,23,42,0.16) !important;
+  text-wrap: balance !important;
+}
+
+.event-visual-footer {
+  position: absolute !important;
+  left: 88px !important;
+  right: 18px !important;
+  bottom: 12px !important;
+  z-index: 4 !important;
+  display: block !important;
+  overflow: hidden !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.14em !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  text-align: center !important;
+  color: rgba(255,255,255,0.78) !important;
+  pointer-events: none;
+}
+
+.event-card-media .event-date-chip,
+.event-date-chip {
+  z-index: 6 !important;
+}
+
+/* ---------- About page ---------- */
+.about-page {
+  color: var(--text-primary) !important;
+}
+
+.about-hero {
+  border-color: var(--glass-border) !important;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(99,102,241,0.18), transparent 32%),
+    linear-gradient(145deg, rgba(20,36,59,0.90), rgba(10,22,38,0.78)) !important;
+  box-shadow: var(--shadow-glass) !important;
+}
+
+.about-hero::before {
+  background: rgba(99,102,241,0.10) !important;
+}
+
+.about-hero .section-header h1,
+.about-section-heading h2,
+.about-role-content h2,
+.about-verification h2 {
+  color: #f6f8fc !important;
+}
+
+.about-hero .section-header p,
+.about-section-heading p,
+.about-role-content p,
+.about-role-label,
+.about-verification p {
+  color: #b8c4d6 !important;
+}
+
+.about-role-card {
+  border-color: var(--glass-border) !important;
+  background: linear-gradient(145deg, rgba(20,36,59,0.88), rgba(10,22,38,0.76)) !important;
+  box-shadow: var(--shadow-glass) !important;
+}
+
+.about-role-card:hover {
+  border-color: rgba(132,145,255,0.28) !important;
+  box-shadow: 0 28px 80px rgba(0,0,0,0.28) !important;
+}
+
+.about-section-heading > span {
+  color: #4f8cff !important;
+}
+
+/* ---------- Mobile navigation drawer ---------- */
+@media (max-width: 860px) {
+  .drawer-actions .btn-outline {
+    color: #334155 !important;
+    border-color: #dbe4f0 !important;
+    background: #fff !important;
+  }
+
+  .drawer-actions .btn-outline:hover:not(:disabled) {
+    color: #1d4ed8 !important;
+    border-color: #bfdbfe !important;
+    background: #eff6ff !important;
+  }
+}
+
+/* ---------- Small-screen event poster ---------- */
+@media (max-width: 420px) {
+  .event-visual-poster-copy {
+    gap: 5px !important;
+    padding: 20px 12px 27px 80px !important;
+  }
+
+  .event-visual-kicker {
+    font-size: 7.5px !important;
+  }
+
+  .event-visual-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .event-visual-category {
+    font-size: 8.5px !important;
+  }
+
+  .event-visual-title {
+    font-size: 16px !important;
+    line-height: 1.12 !important;
+  }
+
+  .event-visual-footer {
+    left: 80px !important;
+    right: 12px !important;
+    bottom: 9px !important;
+    font-size: 6.5px !important;
+  }
+}
+
+/* ========================================================================
+   CAMPUSFLOW — FINAL PUBLIC POLISH
+   Strong contrast + cohesive Aurora Campus treatment for About + drawer.
+   ======================================================================== */
+
+/* About page: make the hierarchy intentional and readable on the dark canvas. */
+.about-page {
+  position: relative;
+  color: #f6f8fc;
+}
+
+.about-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(28px, 5vw, 52px);
+  border: 1px solid rgba(190, 207, 230, 0.13);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(99, 102, 241, 0.20), transparent 28%),
+    radial-gradient(circle at 10% 100%, rgba(34, 199, 230, 0.08), transparent 28%),
+    linear-gradient(145deg, rgba(20, 36, 59, 0.92), rgba(8, 20, 36, 0.86));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.24);
+}
+
+.about-hero::after {
+  content: '';
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: -110px;
+  top: -120px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.10);
+  border: 1px solid rgba(129, 140, 248, 0.10);
+  pointer-events: none;
+}
+
+.about-hero .section-header,
+.about-hero .section-header h1,
+.about-hero .section-header p {
+  position: relative;
+  z-index: 2;
+}
+
+.about-hero .section-header h1 {
+  color: #ffffff !important;
+  text-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+}
+
+.about-hero .section-header p {
+  color: #c5d0df !important;
+  max-width: 760px;
+}
+
+.about-hero-icon {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(129, 140, 248, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(99,102,241,0.18), rgba(34,199,230,0.10));
+  color: #7dd3fc;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.16);
+}
+
+.about-section-heading {
+  margin-top: clamp(52px, 8vw, 82px);
+}
+
+.about-section-heading > span {
+  display: inline-block;
+  color: #5ea2ff !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.about-section-heading h2 {
+  color: #ffffff !important;
+  text-shadow: 0 6px 24px rgba(0,0,0,0.18);
+}
+
+.about-section-heading p {
+  color: #aebdd0 !important;
+}
+
+.about-role-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+  border: 1px solid rgba(190, 207, 230, 0.13) !important;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 100% 100%, rgba(99,102,241,0.12), transparent 34%),
+    linear-gradient(145deg, rgba(20,36,59,0.92), rgba(8,20,36,0.82)) !important;
+}
+
+.about-role-card::after {
+  content: '';
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  right: -85px;
+  bottom: -85px;
+  border-radius: 50%;
+  border: 1px solid rgba(99,102,241,0.10);
+  pointer-events: none;
+}
+
+.about-role-icon {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 66px;
+  height: 66px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(129,140,248,0.18);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(239,246,255,0.96), rgba(219,234,254,0.94));
+  color: #2563eb;
+  box-shadow: 0 14px 32px rgba(0,0,0,0.18);
+}
+
+.about-role-content {
+  position: relative;
+  z-index: 2;
+}
+
+.about-role-label {
+  display: block;
+  margin-bottom: 9px;
+  color: #8fa2ba !important;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+.about-role-content h2 {
+  color: #ffffff !important;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+}
+
+.about-role-content p {
+  color: #b8c6d8 !important;
+  line-height: 1.75;
+}
+
+.about-verification {
+  margin-top: 26px;
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(99,102,241,0.14), rgba(34,199,230,0.05)),
+    rgba(12,26,44,0.84) !important;
+}
+
+.about-verification-kicker {
+  color: #5ea2ff !important;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.about-verification h2 {
+  color: #ffffff !important;
+}
+
+.about-verification p {
+  color: #b8c6d8 !important;
+}
+
+/* ========================================================================
+   MOBILE DRAWER — match the Aurora Campus theme instead of the old white UI.
+   ======================================================================== */
+
+@media (max-width: 860px) {
+  .drawer {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(99,102,241,0.16), transparent 34%),
+      radial-gradient(circle at 0% 70%, rgba(34,199,230,0.07), transparent 30%),
+      linear-gradient(180deg, rgba(9,21,37,0.985), rgba(6,16,29,0.99)) !important;
+    border-left: 1px solid rgba(190,207,230,0.14) !important;
+    box-shadow: -24px 0 70px rgba(0,0,0,0.38) !important;
+    color: #f6f8fc;
+  }
+
+  .drawer-section-title {
+    color: #7f91a9 !important;
+  }
+
+  .drawer-section-note {
+    color: #7f91a9 !important;
+  }
+
+  .drawer-links .nav-link {
+    color: #aebdd0 !important;
+    background: transparent !important;
+  }
+
+  .drawer-links .nav-link:hover {
+    color: #f8fbff !important;
+    background: rgba(99,102,241,0.10) !important;
+  }
+
+  .drawer-links .nav-link.is-active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, rgba(99,102,241,0.20), rgba(34,199,230,0.08)) !important;
+    border: 1px solid rgba(129,140,248,0.14);
+  }
+
+  .drawer-links .nav-link.is-active::after {
+    background: #22c7e6 !important;
+  }
+
+  .drawer-tool-link {
+    border: 1px solid rgba(190,207,230,0.12) !important;
+    background: rgba(255,255,255,0.035) !important;
+    color: #c3cfdf !important;
+  }
+
+  .drawer-tool-link:hover,
+  .drawer-tool-link.is-active {
+    border-color: rgba(129,140,248,0.25) !important;
+    background: rgba(99,102,241,0.11) !important;
+    color: #ffffff !important;
+  }
+
+  .drawer-dashboard-link {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(34,199,230,0.055)) !important;
+    border: 1px solid rgba(129,140,248,0.12);
+    color: #dce7f6 !important;
+  }
+
+  .drawer-dashboard-link:hover {
+    background: linear-gradient(135deg, rgba(99,102,241,0.20), rgba(34,199,230,0.09)) !important;
+  }
+
+  .drawer-actions {
+    padding-top: 16px;
+    border-top: 1px solid rgba(190,207,230,0.10);
+  }
+
+  .drawer-actions .btn-outline {
+    color: #dbe7f5 !important;
+    border-color: rgba(190,207,230,0.18) !important;
+    background: rgba(255,255,255,0.035) !important;
+  }
+
+  .drawer-actions .btn-outline:hover:not(:disabled) {
+    color: #ffffff !important;
+    border-color: rgba(129,140,248,0.30) !important;
+    background: rgba(99,102,241,0.12) !important;
+  }
+
+  .drawer-actions .btn-primary {
+    color: #ffffff !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-hero {
+    padding: 28px 22px 30px;
+    border-radius: 24px;
+  }
+
+  .about-role-card {
+    min-height: 0;
+    padding: 28px 24px !important;
+  }
+
+  .about-role-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 22px;
+  }
+
+  .about-role-content p {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+}

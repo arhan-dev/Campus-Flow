@@ -523,6 +523,142 @@
 }
 
 
+/* ---------- Generated event poster content ---------- */
+/*
+   The event date chip sits on the upper-left of the poster.
+   Keep the generated poster copy in its own layout area so
+   the icon/title never collide with the date chip.
+*/
+
+.event-visual-poster-copy {
+  position: relative;
+
+  z-index: 3;
+
+  width: 100%;
+  height: 100%;
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 22px 20px 28px 88px;
+
+  text-align: center;
+
+  pointer-events: none;
+}
+
+.event-visual-kicker {
+  display: block;
+
+  max-width: 100%;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.event-visual-icon {
+  flex: 0 0 auto;
+
+  color: #ffffff;
+
+  filter:
+    drop-shadow(
+      0 5px 12px rgba(15, 23, 42, 0.18)
+    );
+}
+
+.event-visual-category {
+  display: block;
+
+  max-width: 100%;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.event-visual-title {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+
+  overflow-wrap: anywhere;
+
+  font-size: 19px;
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.025em;
+
+  color: #ffffff;
+
+  text-shadow:
+    0 2px 8px rgba(15, 23, 42, 0.16);
+}
+
+.event-visual-footer {
+  position: absolute;
+
+  left: 88px;
+  right: 18px;
+  bottom: 12px;
+
+  z-index: 4;
+
+  display: block;
+
+  overflow: hidden;
+
+  font-size: 8px;
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.14em;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.78);
+
+  pointer-events: none;
+}
+
+/* The date badge must always remain above poster artwork. */
+.event-date-chip {
+  z-index: 6;
+}
+
+
+
 /* =========================================================
    EVENT CATEGORY GRADIENTS
    ========================================================= */
@@ -1915,6 +2051,42 @@
 
   .event-date-chip span {
     font-size: 10px;
+  }
+
+  .event-visual-poster-copy {
+    gap: 5px;
+
+    padding:
+      20px
+      12px
+      27px
+      80px;
+  }
+
+  .event-visual-kicker {
+    font-size: 7.5px;
+  }
+
+  .event-visual-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .event-visual-category {
+    font-size: 8.5px;
+  }
+
+  .event-visual-title {
+    font-size: 16px;
+    line-height: 1.12;
+  }
+
+  .event-visual-footer {
+    left: 80px;
+    right: 12px;
+    bottom: 9px;
+
+    font-size: 6.5px;
   }
 
   .event-card-body {

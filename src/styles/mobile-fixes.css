@@ -446,3 +446,146 @@
     column-gap: 14px;
   }
 }
+
+/* ========================================================================
+   FINAL AURORA DRAWER POLISH
+   This file is loaded late; these rules intentionally win on mobile.
+   ======================================================================== */
+
+@media (max-width: 860px) {
+  .drawer {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(99,102,241,0.16), transparent 34%),
+      radial-gradient(circle at 0% 70%, rgba(34,199,230,0.07), transparent 30%),
+      linear-gradient(180deg, rgba(9,21,37,0.985), rgba(6,16,29,0.99)) !important;
+    border-left: 1px solid rgba(190,207,230,0.14) !important;
+    box-shadow: -24px 0 70px rgba(0,0,0,0.38) !important;
+  }
+
+  .drawer-scroll {
+    padding-bottom: 6px;
+  }
+
+  .drawer-section + .drawer-section {
+    margin-top: 24px;
+  }
+
+  .drawer-section-title {
+    margin: 0 8px 9px;
+    color: #7f91a9 !important;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+
+  .drawer-section-note {
+    color: #7f91a9 !important;
+  }
+
+  .drawer-links {
+    gap: 5px;
+  }
+
+  .drawer-links .nav-link {
+    justify-content: space-between;
+    min-height: 46px;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    color: #aebdd0 !important;
+    background: transparent !important;
+    font-weight: 650;
+  }
+
+  .drawer-links .nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(99,102,241,0.10) !important;
+  }
+
+  .drawer-links .nav-link.is-active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, rgba(99,102,241,0.20), rgba(34,199,230,0.08)) !important;
+    border-color: rgba(129,140,248,0.14) !important;
+  }
+
+  .drawer-links .nav-link.is-active::after {
+    right: 14px;
+    left: auto;
+    bottom: auto;
+    width: 6px;
+    height: 6px;
+    transform: none;
+    background: #22c7e6 !important;
+    box-shadow: 0 0 12px rgba(34,199,230,0.55);
+  }
+
+  .drawer-tool-link {
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid rgba(190,207,230,0.12) !important;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.035) !important;
+    color: #c3cfdf !important;
+  }
+
+  .drawer-tool-link svg {
+    color: #35c8e3 !important;
+  }
+
+  .drawer-tool-link:hover,
+  .drawer-tool-link.is-active {
+    border-color: rgba(129,140,248,0.25) !important;
+    background: rgba(99,102,241,0.11) !important;
+    color: #ffffff !important;
+  }
+
+  .drawer-dashboard-grid {
+    gap: 8px;
+  }
+
+  .drawer-dashboard-link {
+    min-height: 48px;
+    padding: 11px 14px;
+    border: 1px solid rgba(129,140,248,0.12);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(34,199,230,0.055)) !important;
+    color: #dce7f6 !important;
+  }
+
+  .drawer-dashboard-link svg {
+    color: #4dd3e8 !important;
+  }
+
+  .drawer-dashboard-link:hover {
+    background: linear-gradient(135deg, rgba(99,102,241,0.20), rgba(34,199,230,0.09)) !important;
+    transform: translateX(2px);
+  }
+
+  .drawer-actions {
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(190,207,230,0.10);
+  }
+
+  .drawer-actions .btn {
+    min-height: 48px;
+    border-radius: 14px;
+  }
+
+  .drawer-actions .btn-outline {
+    color: #dbe7f5 !important;
+    border-color: rgba(190,207,230,0.18) !important;
+    background: rgba(255,255,255,0.035) !important;
+  }
+
+  .drawer-actions .btn-outline:hover:not(:disabled) {
+    color: #ffffff !important;
+    border-color: rgba(129,140,248,0.30) !important;
+    background: rgba(99,102,241,0.12) !important;
+  }
+
+  .drawer-actions .btn-primary {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+    box-shadow: 0 12px 30px rgba(79,70,229,0.28) !important;
+  }
+}
