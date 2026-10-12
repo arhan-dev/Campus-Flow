@@ -10,13 +10,18 @@
 -- Event Organiser role.
 -- ============================================================================
 
--- 1. Normalize any existing staff accounts to the new role.
+-- 1. Replace the old role constraint BEFORE converting legacy staff roles.
+-- The initial schema constrains role to student/faculty/admin, so updating a
+-- faculty/admin row first would fail the existing CHECK constraint.
+alter table public.profiles
+  drop constraint if exists profiles_role_check;
+
+-- 2. Normalize any legacy staff accounts to the final product role.
 update public.profiles
 set role = 'organizer'
 where role in ('faculty', 'admin');
 
--- 2. Replace the role constraint.
-alter table public.profiles drop constraint if exists profiles_role_check;
+-- 3. Enforce the final application role model.
 alter table public.profiles
   add constraint profiles_role_check
   check (role in ('student', 'organizer'));
@@ -210,6 +215,7 @@ drop policy if exists profiles_update_admin on public.profiles;
 -- Organisers can read the people needed to manage registrations/attendance,
 -- while students continue to see only their own profile.
 drop policy if exists profiles_read_admin on public.profiles;
+drop policy if exists profiles_read_organizer on public.profiles;
 create policy profiles_read_organizer on public.profiles
   for select to authenticated
   using (public.is_organizer() or id = auth.uid());
@@ -221,6 +227,7 @@ create policy profiles_read_organizer on public.profiles
 -- 11. Explicit organizer policies for clubs. The legacy policies remain safe,
 -- but these names make the new permission model self-documenting.
 drop policy if exists clubs_admin on public.clubs;
+drop policy if exists clubs_organizer on public.clubs;
 create policy clubs_organizer on public.clubs
   for all to authenticated
   using (public.is_organizer())
@@ -228,18 +235,21 @@ create policy clubs_organizer on public.clubs
 
 -- Reference data used by organisers.
 drop policy if exists departments_admin on public.departments;
+drop policy if exists departments_organizer on public.departments;
 create policy departments_organizer on public.departments
   for all to authenticated
   using (public.is_organizer())
   with check (public.is_organizer());
 
 drop policy if exists categories_admin on public.event_categories;
+drop policy if exists categories_organizer on public.event_categories;
 create policy categories_organizer on public.event_categories
   for all to authenticated
   using (public.is_organizer())
   with check (public.is_organizer());
 
 drop policy if exists venues_admin on public.venues;
+drop policy if exists venues_organizer on public.venues;
 create policy venues_organizer on public.venues
   for all to authenticated
   using (public.is_organizer())
