@@ -8,10 +8,11 @@ For a new Supabase project, run these files in the SQL Editor in this exact orde
 2. `migrations/002_section7.sql`
 3. `migrations/003_section8_hardening.sql`
 4. `migrations/004_event_organizer_model.sql`
+5. `migrations/005_lock_profile_roles.sql`
 
 Stop if any migration reports an error. Do not continue to later migrations until the error is resolved.
 
-`004_event_organizer_model.sql` replaces the legacy `student` / `faculty` / `admin` role model with `student` / `organizer`. The migration now drops the old role constraint before converting legacy staff rows, then installs the final constraint.
+`004_event_organizer_model.sql` replaces the legacy `student` / `faculty` / `admin` role model with `student` / `organizer`. `005_lock_profile_roles.sql` prevents authenticated students and organisers from changing any profile role, status, or email; trusted SQL Editor changes remain possible.
 
 ## Seed data
 
