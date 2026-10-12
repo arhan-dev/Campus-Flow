@@ -93,7 +93,7 @@ export function AuthProvider({ children }) {
     configured: isSupabaseConfigured,
     user: session?.user || null,
     profile,
-    role: profile?.status === 'active' ? profile.role : null,
+    role: String(profile?.status || '').trim().toLowerCase() === 'active' ? profile.role : null,
     // loading until the session is known and, for a signed-in user, until their profile lookup has finished
     loading: sessionLoading || (Boolean(userId) && loadedFor !== userId),
     profileError,

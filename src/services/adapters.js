@@ -115,9 +115,10 @@ export function adaptProfile(row) {
     id: row.id,
     name: row.full_name || row.email || 'Unnamed user',
     email: row.email || '',
-    role: row.role,
-    roleLabel: row.role === 'organizer' ? 'Event Organiser' : cap(row.role),
-    status: cap(row.status),
+    // Normalize values returned by Supabase so login/guards behave consistently.
+    role: String(row.role || '').trim().toLowerCase(),
+    roleLabel: String(row.role || '').trim().toLowerCase() === 'organizer' ? 'Event Organiser' : cap(String(row.role || '').trim().toLowerCase()),
+    status: cap(String(row.status || '').trim().toLowerCase()),
     department: row.department?.name || '',
     departmentId: row.department_id,
     year: row.year_of_study || '',

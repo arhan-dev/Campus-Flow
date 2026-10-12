@@ -26,10 +26,13 @@ export default function Login() {
 
   // Once a signed-in user's profile is known, send them to the right place
   useEffect(() => {
-    if (!user || !profile || profile.status !== 'active') return;
-    const otherArea = ROLES.some((a) => a !== role && returnTo?.startsWith(`/${a}`));
-    navigate(returnTo && !otherArea ? returnTo : roleHome(role), { replace: true });
-  }, [user, profile, role, returnTo, navigate]);
+    if (!user || !profile || String(profile.status || '').trim().toLowerCase() !== 'active') return;
+    const resolvedRole = ROLES.includes(String(role || profileRole).trim().toLowerCase())
+      ? String(role || profileRole).trim().toLowerCase()
+      : 'student';
+    const otherArea = ROLES.some((a) => a !== resolvedRole && returnTo?.startsWith(`/${a}`));
+    navigate(returnTo && !otherArea ? returnTo : roleHome(resolvedRole), { replace: true });
+  }, [user, profile, role, profileRole, returnTo, navigate]);
 
   const set = (key) => (e) => { setForm({ ...form, [key]: e.target.value }); setErrors({ ...errors, [key]: undefined }); };
 
@@ -71,7 +74,9 @@ export default function Login() {
     );
   }
 
-  const blocked = user && profile && profile.status !== 'active';
+  const profileStatus = String(profile?.status || '').trim().toLowerCase();
+  const profileRole = String(profile?.role || '').trim().toLowerCase();
+  const blocked = user && profile && profileStatus !== 'active';
   const title = { login: 'Welcome back', signup: 'Create your account', forgot: 'Reset your password' }[mode];
   const subtitle = {
     login: returnTo ? 'Log in to continue where you left off.' : 'Log in to continue to your dashboard.',
@@ -101,7 +106,7 @@ export default function Login() {
 
           {blocked && (
             <p className="form-error" role="alert">
-              Your account is {profile.status}. {profile.status === 'pending' ? 'It is waiting to be activated by the CampusFlow events office.' : 'Please contact the CampusFlow events office.'}{' '}
+              Your account is {profile.status}. {profileStatus === 'pending' ? 'It is waiting to be activated by the CampusFlow events office.' : 'Please contact the CampusFlow events office.'}{' '}
               <button type="button" className="link-btn" onClick={signOut}>Log out</button>
             </p>
           )}

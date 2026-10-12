@@ -52,9 +52,9 @@ function HeroPreview() {
               {event.category}
             </Badge>
 
-            <span className="preview-live">
+            <span className={`preview-live preview-status-${String(event.status || '').trim().toLowerCase().replace(/[^a-z]+/g, '-')}`}>
               <span />
-              Registrations open
+              {({ open: 'Registrations open', upcoming: 'Registration opens soon', full: 'Event full', closed: 'Registrations closed', completed: 'Event completed', cancelled: 'Event cancelled' })[String(event.status || '').trim().toLowerCase()] || 'Check event details'}
             </span>
           </div>
 

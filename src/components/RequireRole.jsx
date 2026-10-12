@@ -32,17 +32,18 @@ export default function RequireRole({ role }) {
       </main>
     );
   }
-  if (profile.status !== 'active') {
+  const profileStatus = String(profile.status || '').trim().toLowerCase();
+  if (profileStatus !== 'active') {
     return (
       <main id="main" className="placeholder" role="alert">
         <div className="placeholder-icon" aria-hidden="true"><ShieldAlert size={32} /></div>
         <h1>Your account is {profile.status}</h1>
-        <p>{profile.status === 'pending' ? 'Your account is waiting to be activated by the events office.' : 'Your account has been deactivated. Please contact the events office.'}</p>
+        <p>{profileStatus === 'pending' ? 'Your account is waiting to be activated by the events office.' : 'Your account has been deactivated. Please contact the events office.'}</p>
         <Button variant="outline" onClick={async () => { await signOut(); navigate('/login'); }}>Log out</Button>
       </main>
     );
   }
-  if (role && profile.role !== role) {
+  if (role && String(profile.role || '').trim().toLowerCase() !== String(role).trim().toLowerCase()) {
     return (
       <main id="main" className="placeholder">
         <div className="placeholder-icon" aria-hidden="true"><ShieldAlert size={32} /></div>
