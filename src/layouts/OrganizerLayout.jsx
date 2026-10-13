@@ -1,4 +1,4 @@
-import { LayoutDashboard, CalendarDays, PlusCircle, ClipboardList, QrCode, Award, BarChart3, Megaphone, MessageSquare, User, Images, Layers } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, PlusCircle, ClipboardList, QrCode, Award, BarChart3, Megaphone, MessageSquare, User, Images, Layers, GitBranch } from 'lucide-react';
 import DashboardLayout from './DashboardLayout';
 import useCampusData from '../hooks/useCampusData';
 
@@ -10,6 +10,7 @@ const navItems = [
   { to: '/organizer/registrations', label: 'Registrations', icon: ClipboardList },
   { to: '/organizer/attendance', label: 'Attendance', icon: QrCode },
   { to: '/organizer/clubs', label: 'Clubs', icon: Layers },
+  { to: '/organizer/branches', label: 'Branches', icon: GitBranch },
   { to: '/organizer/certificates', label: 'Certificates', icon: Award },
   { to: '/organizer/gallery', label: 'Gallery', icon: Images },
   { heading: 'Engagement' },

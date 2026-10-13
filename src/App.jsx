@@ -33,6 +33,7 @@ import OrganizerCertificates from './pages/organizer/Certificates';
 import OrganizerFeedback from './pages/organizer/Feedback';
 import OrganizerAnalytics from './pages/organizer/Analytics';
 import OrganizerClubs from './pages/organizer/Clubs';
+import OrganizerBranches from './pages/organizer/Branches';
 import RegistrationsPage from './pages/manage/Registrations';
 import AnnouncementsPage from './pages/manage/Announcements';
 import ProfilePage from './pages/manage/Profile';
@@ -108,6 +109,7 @@ export default function App() {
             <Route path="feedback" element={<OrganizerFeedback />} />
             <Route path="analytics" element={<OrganizerAnalytics />} />
             <Route path="clubs" element={<OrganizerClubs />} />
+            <Route path="branches" element={<OrganizerBranches />} />
             <Route path="profile" element={<ProfilePage scope="organizer" />} />
             <Route path="*" element={<ManageNotFound home="/organizer/dashboard" />} />
           </Route>

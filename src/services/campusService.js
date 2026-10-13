@@ -112,3 +112,28 @@ export async function setClubActive(id, active) {
 export async function setVenueStatus(id, status) {
   unwrap(await supabase.from('venues').update({ status: status.toLowerCase() }).eq('id', id), 'Could not update the venue.');
 }
+
+
+// ---------- Organizer: branch management (branches use the existing departments table) ----------
+export async function createBranch({ name, code }) {
+  const cleanName = String(name || '').trim();
+  const cleanCode = String(code || cleanName).trim().toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  if (!cleanName) throw new Error('Enter a branch name.');
+  if (!cleanCode) throw new Error('Enter a short branch code.');
+  unwrap(await supabase.from('departments').insert({
+    name: cleanName,
+    code: cleanCode,
+    description: null,
+    is_active: true,
+  }), 'Could not add the branch. Check that its name and code are unique.');
+}
+
+export async function updateBranch(id, { name }) {
+  const cleanName = String(name || '').trim();
+  if (!cleanName) throw new Error('Enter a branch name.');
+  unwrap(await supabase.from('departments').update({ name: cleanName }).eq('id', id), 'Could not rename the branch. Branch names must be unique.');
+}
+
+export async function setBranchActive(id, active) {
+  unwrap(await supabase.from('departments').update({ is_active: Boolean(active) }).eq('id', id), 'Could not update the branch.');
+}
