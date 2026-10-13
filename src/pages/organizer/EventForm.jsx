@@ -35,7 +35,7 @@ const emptyValues = (organizer) => ({
   title: '', category: '', description: '', department: organizer.department || '', organizer: '',
   contactName: organizer.name, contactEmail: organizer.email, contactPhone: '',
   date: '', startTime: '', endTime: '', schedule: [{ time: '', activity: '' }],
-  venue: '', capacity: '', registrationOpensOn: '', registrationDeadline: '', rules: [''], prizes: [''], posterName: '',
+  venue: '', capacity: '', allowedBranches: [], registrationOpensOn: '', registrationDeadline: '', rules: [''], prizes: [''], posterName: '',
 });
 
 function fromEvent(e) {
@@ -44,7 +44,7 @@ function fromEvent(e) {
     contactName: e.contactName || '', contactEmail: e.contactEmail || '', contactPhone: e.contactPhone || '',
     date: e.date, startTime: to24h(e.time), endTime: to24h(e.endTime),
     schedule: e.schedule?.length ? e.schedule.map(([time, activity]) => ({ time, activity })) : [{ time: '', activity: '' }],
-    venue: e.venue, capacity: String(e.capacity), registrationOpensOn: e.registrationOpensOn || '', registrationDeadline: e.registrationDeadline,
+    venue: e.venue, capacity: String(e.capacity), allowedBranches: e.allowedBranches || [], registrationOpensOn: e.registrationOpensOn || '', registrationDeadline: e.registrationDeadline,
     rules: e.rules?.length ? [...e.rules] : [''], prizes: e.prizes?.length ? [...e.prizes] : [''], posterName: e.posterName || '',
   };
 }
@@ -56,7 +56,7 @@ function toEvent(v) {
     contactName: v.contactName.trim(), contactEmail: v.contactEmail.trim(), contactPhone: v.contactPhone.trim(),
     date: v.date, time: to12h(v.startTime), endTime: to12h(v.endTime),
     schedule: v.schedule.filter((r) => r.time.trim() || r.activity.trim()).map((r) => [r.time.trim(), r.activity.trim()]),
-    venue: v.venue, capacity: Number(v.capacity) || 0, registrationOpensOn: v.registrationOpensOn, registrationDeadline: v.registrationDeadline,
+    venue: v.venue, capacity: Number(v.capacity) || 0, allowedBranches: v.allowedBranches || [], registrationOpensOn: v.registrationOpensOn, registrationDeadline: v.registrationDeadline,
     rules: v.rules.map((r) => r.trim()).filter(Boolean), prizes: v.prizes.map((r) => r.trim()).filter(Boolean), posterName: v.posterName,
   };
 }
@@ -78,7 +78,7 @@ function validate(v, { isNew, registered }) {
   if (!v.endTime) e.endTime = 'Choose an end time.';
   else if (v.startTime && v.endTime <= v.startTime) e.endTime = 'The end time must be after the start time.';
 
-  if (!v.venue) e.venue = 'Choose a venue.';
+  if (!v.venue.trim()) e.venue = 'Enter the event venue.';
   const capacity = Number(v.capacity);
   if (v.capacity === '') e.capacity = 'Enter the number of seats.';
   else if (!Number.isInteger(capacity) || capacity <= 0) e.capacity = 'Capacity must be a whole number greater than zero.';
@@ -181,10 +181,6 @@ function EventFormContent({ scope, event, data }) {
     const names = clubs.filter((c) => c.is_active).map((c) => c.name);
     return values.organizer && !names.includes(values.organizer) ? [values.organizer, ...names] : names;
   }, [clubs, values.organizer]);
-  const venueOptions = useMemo(() => {
-    const names = venues.map((v) => v.name);
-    return values.venue && !names.includes(values.venue) ? [values.venue, ...names] : names;
-  }, [venues, values.venue]);
 
   const ctx = { isNew: !isEdit, registered: event?.registered || 0 };
   const previewEvent = useMemo(() => ({
@@ -392,11 +388,8 @@ function EventFormContent({ scope, event, data }) {
 
           {current.key === 'venue' && (
             <>
-              <Field id="ef-venue" label="Venue" required error={errors.venue}>
-                <select {...bind('venue')}>
-                  <option value="">Choose a venue</option>
-                  {venueOptions.map((v) => <option key={v} value={v}>{v}</option>)}
-                </select>
+              <Field id="ef-venue" label="Venue / place" required error={errors.venue} hint="Type any venue name or location. You do not need to select a predefined place.">
+                <input type="text" maxLength={180} placeholder="e.g. Seminar Hall B, Main Auditorium, Lab 204" {...bind('venue')} />
               </Field>
               <ConflictNotice venue={values.venue} others={clashes} className="notice-spaced" />
               <Field id="ef-capacity" label="Capacity" required error={errors.capacity} hint={event?.registered ? `${event.registered} students are already registered.` : 'The number of seats you want to offer.'}>
@@ -407,6 +400,18 @@ function EventFormContent({ scope, event, data }) {
 
           {current.key === 'registration' && (
             <>
+              <fieldset className="repeat-group">
+                <legend>Eligible branches (optional)</legend>
+                <p className="field-hint">Choose which student branches may register. Leave all unchecked to allow every branch.</p>
+                <div className="form-two">
+                  {DEPARTMENTS.map((branch) => (
+                    <label className="check-row" key={branch}>
+                      <input type="checkbox" checked={(values.allowedBranches || []).includes(branch)} onChange={(e) => set('allowedBranches', e.target.checked ? [...(values.allowedBranches || []), branch] : (values.allowedBranches || []).filter((x) => x !== branch))} />
+                      <span>{branch}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               <Field id="ef-registrationOpensOn" label="Registration opens on (optional)" error={errors.registrationOpensOn} hint="Leave empty to open registration as soon as the event is approved.">
                 <input type="date" max={values.registrationDeadline || values.date || undefined} {...bind('registrationOpensOn')} />
               </Field>

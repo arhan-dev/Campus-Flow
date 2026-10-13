@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { QrCode, UserCheck, UserX, Save, CheckCheck, BarChart3, Power, RefreshCw } from 'lucide-react';
+import { QrCode, UserCheck, UserX, Save, CheckCheck, BarChart3, Power, RefreshCw, Camera, CameraOff } from 'lucide-react';
 import PageHeader from '../../components/PageHeader';
 import Button from '../../components/Button';
 import Badge from '../../components/Badge';
@@ -16,9 +16,9 @@ import { saveAttendance } from '../../services/campusService';
 import { formatDate, todayISO } from '../../lib/dates';
 import { encodeQr, qrPath } from '../../lib/qr';
 import { ATTENDANCE_SESSION_MINUTES } from '../../lib/constants';
-import { fetchOpenSession, openAttendanceSession, closeAttendanceSession, checkInUrl, formatCode } from '../../services/attendanceService';
+import { fetchOpenSession, openAttendanceSession, closeAttendanceSession, checkInUrl, formatCode, admitRegistration, extractRegistrationId } from '../../services/attendanceService';
 
-const TABS = ['Manual attendance', 'QR attendance'];
+const TABS = ['Manual attendance', 'Organizer scanner', 'QR attendance'];
 
 // Manual attendance (Section 6) plus QR attendance: the QR holds a link with a secret session code. Students open it,
 // and the database checks the student, registration, event and session before marking anyone present.
@@ -27,6 +27,11 @@ export default function OrganizerAttendance() {
   const [params] = useSearchParams();
   const [tab, setTab] = useState(TABS[0]);
   const [toast, showToast, closeToast] = useToast();
+  const [scannerActive, setScannerActive] = useState(false);
+  const [scanMessage, setScanMessage] = useState('');
+  const [scanBusy, setScanBusy] = useState(false);
+  const scanVideoRef = useRef(null);
+  const scanStreamRef = useRef(null);
 
   const options = useMemo(() => {
     const withRoster = data.myEvents.filter((e) => data.rosterFor(e.id).length > 0);
@@ -78,10 +83,10 @@ export default function OrganizerAttendance() {
     setSessionState('loading');
     try { setSession(await fetchOpenSession(eventId)); setSessionState('idle'); } catch (e) { setSession(null); setSessionState(e.message); }
   }, [eventId]);
-  useEffect(() => { if (tab === TABS[1]) loadSession(); }, [tab, loadSession]);
+  useEffect(() => { if (tab === TABS[2]) loadSession(); }, [tab, loadSession]);
   // While a session is open keep the roster fresh (realtime also refreshes it when a student checks in)
   useEffect(() => {
-    if (tab !== TABS[1] || !session) return undefined;
+    if (tab !== TABS[2] || !session) return undefined;
     const t = setInterval(() => data.refresh(), 15000);
     return () => clearInterval(t);
   }, [tab, session, data]);
@@ -95,6 +100,25 @@ export default function OrganizerAttendance() {
   };
   const expired = session && new Date(session.expires_at).getTime() <= Date.now();
   const qr = useMemo(() => (session ? encodeQr(checkInUrl(session.code)) : null), [session]);
+  const stopScanner = useCallback(() => { scanStreamRef.current?.getTracks().forEach((track) => track.stop()); scanStreamRef.current = null; setScannerActive(false); }, []);
+  useEffect(() => () => { scanStreamRef.current?.getTracks().forEach((track) => track.stop()); }, []);
+  const startScanner = async () => {
+    setScanMessage('');
+    if (!('BarcodeDetector' in window) || !navigator.mediaDevices?.getUserMedia) { setScanMessage('QR scanning is not supported by this browser. Use manual attendance for this student.'); return; }
+    try { scanStreamRef.current = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); setScannerActive(true); }
+    catch { setScanMessage('Camera permission was denied or the camera is unavailable.'); }
+  };
+  useEffect(() => {
+    if (!scannerActive || !scanVideoRef.current || !scanStreamRef.current) return undefined;
+    const video = scanVideoRef.current; video.srcObject = scanStreamRef.current; video.play().catch(() => {});
+    const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+    let working = false;
+    const timer = setInterval(async () => {
+      if (working || video.readyState < 2) return;
+      try { const codes = await detector.detect(video); if (!codes.length) return; const registrationId = extractRegistrationId(codes[0].rawValue); if (!registrationId) { setScanMessage('This QR is not a CampusFlow student entry pass.'); return; } working = true; setScanBusy(true); stopScanner(); try { const result = await admitRegistration(registrationId); setScanMessage(`Entry approved${result?.student_name ? ` for ${result.student_name}` : ''}${result?.event_title ? ` — ${result.event_title}` : ''}.`); showToast('Student entry approved.'); await data.refresh(); } catch (err) { setScanMessage(err.message); } finally { setScanBusy(false); working = false; } } catch { /* skip unreadable frame */ }
+    }, 450);
+    return () => clearInterval(timer);
+  }, [scannerActive, stopScanner, data, showToast]);
 
   if (options.length === 0 || !event) {
     return (
@@ -146,8 +170,8 @@ export default function OrganizerAttendance() {
                     const status = statusOf(r);
                     return (
                       <tr key={r.key}>
-                        <td data-label="Participant"><strong>{r.student.name}</strong></td>
-                        <td data-label="Department">{r.student.department}</td>
+                        <td data-label="Participant"><strong>{r.fullName || r.student.name}</strong><div className="row-muted">{r.rollNumber || r.student.studentNumber || "No roll number"}</div></td>
+                        <td data-label="Department">{r.branch || r.student.department}</td>
                         <td data-label="Status"><AttendanceBadge status={status} /></td>
                         <td data-label="Method">{r.attendanceMethod || <span className="row-muted">-</span>}</td>
                         <td data-label="Mark">
@@ -164,6 +188,14 @@ export default function OrganizerAttendance() {
             </div>
           </section>
         </>
+      ) : tab === TABS[1] ? (
+        <section className="card panel" aria-label="Scan student entry pass">
+          <div className="panel-head"><h2>Scan student QR pass</h2><Badge variant="neutral">Organizer only</Badge></div>
+          <InfoNote>Scan the student's personal registration QR at the event entrance. CampusFlow verifies that the pass belongs to a registered student and records attendance only once.</InfoNote>
+          {scannerActive ? <><video ref={scanVideoRef} className="scan-video" muted playsInline aria-label="Camera scanning student entry QR"/><Button variant="outline" icon={CameraOff} onClick={stopScanner}>Stop camera</Button></> : <Button icon={Camera} onClick={startScanner} disabled={scanBusy}>{scanBusy ? 'Verifying pass...' : 'Open entrance scanner'}</Button>}
+          {scanMessage && <p className={scanMessage.includes('approved') ? 'notice notice-success' : 'form-error'} role="status">{scanMessage}</p>}
+          <p className="field-hint">If the camera cannot scan, use Manual attendance and mark the student present after checking their registration details.</p>
+        </section>
       ) : (
         <>
           <section className="card panel qr-panel" aria-label="QR attendance">

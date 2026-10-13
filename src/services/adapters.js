@@ -47,7 +47,8 @@ export function adaptEvent(row, seats = 0, liveStatus) {
     date: row.event_date,
     time: timeTo12h(row.start_time),
     endTime: row.end_time ? timeTo12h(row.end_time) : '',
-    venue: row.venue?.name || '',
+    venue: row.venue_text || row.venue?.name || '',
+    allowedBranches: row.allowed_branches || [],
     organizer: row.club?.name || '',
     department: row.department?.name || '',
     departmentCode: row.department?.code || '',
@@ -84,8 +85,7 @@ export function eventToRow(f, lookups) {
   const idByName = (list, name) => list.find((x) => x.name === name)?.id ?? null;
   const categoryId = idByName(lookups.categories, f.category);
   if (!categoryId) throw new Error('Choose a category from the list.');
-  const venueId = idByName(lookups.venues, f.venue);
-  if (!venueId) throw new Error('Choose a venue from the list.');
+  const venueId = idByName(lookups.venues, f.venue) || null;
   return {
     title: f.title,
     description: f.description,
@@ -93,6 +93,8 @@ export function eventToRow(f, lookups) {
     club_id: idByName(lookups.clubs, f.organizer),
     department_id: idByName(lookups.departments, f.department),
     venue_id: venueId,
+    venue_text: (f.venue || '').trim(),
+    allowed_branches: f.allowedBranches || [],
     event_date: f.date,
     start_time: timeTo24h(f.time),
     end_time: f.endTime ? timeTo24h(f.endTime) : null,

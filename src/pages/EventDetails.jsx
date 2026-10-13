@@ -27,11 +27,12 @@ export default function EventDetails() {
 function EventDetailsContent({ id }) {
   const navigate = useNavigate();
   const { user, profile, role } = useAuth();
-  const { events, getEvent, loading, error: loadError, refresh } = useCatalog();
+  const { events, getEvent, loading, error: loadError, refresh, departmentNames: DEPARTMENTS } = useCatalog();
   const event = getEvent(id);
   const [modal, setModal] = useState(null); // null | 'login' | 'confirm' | 'not-student'
   const [busy, setBusy] = useState(false);
   const [registerError, setRegisterError] = useState('');
+  const [registrationDetails, setRegistrationDetails] = useState({ fullName: profile?.name || '', rollNumber: profile?.studentNumber || '', branch: profile?.department || '' });
   const { registeredIds, refresh: refreshStudent } = useStudentData();
   const [toast, setToast] = useState('');
   const closeToast = useCallback(() => setToast(''), []);
@@ -83,10 +84,11 @@ function EventDetailsContent({ id }) {
     setBusy(true);
     setRegisterError('');
     try {
-      await registerForEvent(event.id, profile.id);
+      if (!registrationDetails.fullName.trim() || !registrationDetails.rollNumber.trim() || !registrationDetails.branch.trim()) throw new Error('Enter your full name, roll number and branch.');
+      await registerForEvent(event.id, profile.id, { fullName: registrationDetails.fullName.trim(), rollNumber: registrationDetails.rollNumber.trim(), branch: registrationDetails.branch.trim() });
       await Promise.all([refresh(), refreshStudent()]);
       setModal(null);
-      setToast('Registration successful! Your seat is reserved.');
+      setToast('Registration successful! Your entry QR pass is available in My Events.');
     } catch (e) {
       setRegisterError(e.message);
       refresh(); // the seat count may have changed (for example the event just filled up)
@@ -235,7 +237,7 @@ function EventDetailsContent({ id }) {
 
       <Modal
         open={modal === 'confirm'}
-        title={`Register for ${event.title}?`}
+        title={`Register for ${event.title}`}
         onClose={closeModal}
         footer={(
           <>
@@ -248,6 +250,10 @@ function EventDetailsContent({ id }) {
           <li><Calendar size={16} aria-hidden="true" /> {formatDate(event.date)}, {event.time}</li>
           <li><MapPin size={16} aria-hidden="true" /> {event.venue}</li>
         </ul>
+        <div className="field"><label htmlFor="reg-full-name">Full name *</label><input id="reg-full-name" value={registrationDetails.fullName} onChange={(e) => setRegistrationDetails((v) => ({ ...v, fullName: e.target.value }))} autoComplete="name" required /></div>
+        <div className="field"><label htmlFor="reg-roll-number">College roll number *</label><input id="reg-roll-number" value={registrationDetails.rollNumber} onChange={(e) => setRegistrationDetails((v) => ({ ...v, rollNumber: e.target.value }))} autoComplete="off" required /></div>
+        <div className="field"><label htmlFor="reg-branch">Branch *</label><select id="reg-branch" value={registrationDetails.branch} onChange={(e) => setRegistrationDetails((v) => ({ ...v, branch: e.target.value }))} required><option value="">Select your branch</option>{(event.allowedBranches?.length ? event.allowedBranches : (DEPARTMENTS || [])).map((b) => <option key={b} value={b}>{b}</option>)}</select></div>
+        {event.allowedBranches?.length > 0 && <p className="field-hint">This event is open only to: {event.allowedBranches.join(', ')}.</p>}
         {registerError && <p className="form-error" role="alert">{registerError}</p>}
       </Modal>
 

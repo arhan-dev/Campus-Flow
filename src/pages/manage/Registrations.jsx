@@ -38,7 +38,7 @@ export default function RegistrationsPage({ scope }) {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return rows.filter((r) => (
-      (!q || [r.student.name, r.event.title, r.student.department, isOrganizer ? r.student.id : ''].join(' ').toLowerCase().includes(q))
+      (!q || [r.fullName, r.rollNumber, r.branch, r.student.name, r.event.title, r.student.department, isOrganizer ? r.student.id : ''].join(' ').toLowerCase().includes(q))
       && (!eventId || String(r.eventId) === eventId)
       && (!status || r.status === status)
       && (!attendance || r.attendance === attendance)
@@ -82,13 +82,13 @@ export default function RegistrationsPage({ scope }) {
           <div className="table-wrap">
             <table className="table">
               <thead>
-                <tr><th>Student</th><th>Department</th><th>Event</th><th>Registered on</th><th>Status</th><th>Attendance</th><th>Certificate</th><th>Details</th></tr>
+                <tr><th>Student / Roll no.</th><th>Branch</th><th>Event</th><th>Registered on</th><th>Status</th><th>Attendance</th><th>Certificate</th><th>Details</th></tr>
               </thead>
               <tbody>
                 {filtered.map((r) => (
                   <tr key={r.key}>
-                    <td data-label="Student"><strong>{r.student.name}</strong></td>
-                    <td data-label="Department">{r.student.department}</td>
+                    <td data-label="Student / Roll no."><strong>{r.fullName || r.student.name}</strong><div className="row-muted">{r.rollNumber || r.student.studentNumber || 'Roll number not recorded'}</div></td>
+                    <td data-label="Branch">{r.branch || r.student.department}</td>
                     <td data-label="Event">{r.event.title}</td>
                     <td data-label="Registered on">{formatDate(r.registeredOn)}</td>
                     <td data-label="Status"><RegistrationBadge status={r.status} /></td>
@@ -108,8 +108,9 @@ export default function RegistrationsPage({ scope }) {
       {detail && (
         <Modal open title="Participant details" onClose={closeDetail} footer={<Button onClick={closeDetail}>Close</Button>}>
           <dl className="detail-list">
-            <div><dt>Name</dt><dd>{detail.student.name}</dd></div>
-            <div><dt>Department</dt><dd>{detail.student.department}</dd></div>
+            <div><dt>Name</dt><dd>{detail.fullName || detail.student.name}</dd></div>
+            <div><dt>Roll number</dt><dd>{detail.rollNumber || detail.student.studentNumber || 'Not recorded'}</dd></div>
+            <div><dt>Branch</dt><dd>{detail.branch || detail.student.department}</dd></div>
             <div><dt>Event</dt><dd>{detail.event.title}</dd></div>
             <div><dt>Registration status</dt><dd><RegistrationBadge status={detail.status} /></dd></div>
             <div><dt>Attendance</dt><dd><AttendanceBadge status={detail.attendance} /></dd></div>

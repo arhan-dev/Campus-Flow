@@ -55,10 +55,10 @@ export default function OrganizerDashboard() {
 
 
       <div className="grid grid-stats">
-        <StatCard label="Events you manage" value={myEvents.length} note={`${myEvents.filter((e) => e.lifecycle === 'Completed').length} completed`} tone="primary" icon={CalendarDays} />
-        <StatCard label="Upcoming events" value={upcoming.length} note={nextEvent ? `Next: ${formatDate(nextEvent.date)}` : 'None scheduled'} tone="secondary" icon={ClipboardList} />
-        <StatCard label="Registrations" value={totalRegistrations.toLocaleString('en-IN')} note={`Across ${published.length} published events`} tone="warning" icon={Users} />
-        <StatCard label="Attendance" value={attendance.marked ? `${attendance.rate}%` : '-'} note={attendance.marked ? `${attendance.present} of ${attendance.marked} marked present` : 'No attendance marked yet'} tone="success" icon={CheckCircle2} />
+        <StatCard label="Events you manage" value={myEvents.length} note={`${myEvents.filter((e) => e.lifecycle === 'Completed').length} completed`} tone="primary" icon={CalendarDays} to="/organizer/events" />
+        <StatCard label="Upcoming events" value={upcoming.length} note={nextEvent ? `Next: ${formatDate(nextEvent.date)}` : 'None scheduled'} tone="secondary" icon={ClipboardList} to="/organizer/events" />
+        <StatCard label="Registrations" value={totalRegistrations.toLocaleString('en-IN')} note={`Across ${published.length} published events`} tone="warning" icon={Users} to="/organizer/registrations" />
+        <StatCard label="Attendance" value={attendance.marked ? `${attendance.rate}%` : '-'} note={attendance.marked ? `${attendance.present} of ${attendance.marked} marked present` : 'No attendance marked yet'} tone="success" icon={CheckCircle2} to="/organizer/attendance" />
       </div>
 
       <div className="dash-grid">

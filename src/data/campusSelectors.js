@@ -87,7 +87,7 @@ export function buildCampusData(raw, profile) {
       if (cert) certificate = 'Issued';
       else if (confirmed && attendance === 'Present') certificate = 'Pending';
       return {
-        key, eventId: reg.event_id, studentId: reg.student_id, registeredOn: String(reg.registered_at).slice(0, 10), status,
+        key, registrationId: reg.id, eventId: reg.event_id, studentId: reg.student_id, registeredOn: String(reg.registered_at).slice(0, 10), fullName: reg.full_name || student.name, rollNumber: reg.roll_number || student.studentNumber || '', branch: reg.branch || student.department || '', status,
         event, student, attendance, certificate, certificateType: cert?.type,
         attendanceMethod: confirmed ? attendanceMethodFor(reg.event_id, reg.student_id) : '',
       };
@@ -175,7 +175,7 @@ export function buildStudentData(raw, catalogEvents, profile) {
   const student = withFirstName(profile ? { ...profile, detail: [profile.department, profile.year].filter(Boolean).join(', ') } : { name: '', role: 'Student' });
 
   const allRegs = r.registrations
-    .map((x) => ({ eventId: x.event_id, regStatus: x.status, registeredOn: String(x.registered_at).slice(0, 10), event: eventById.get(x.event_id) }))
+    .map((x) => ({ registrationId: x.id, fullName: x.full_name || profile?.name || '', rollNumber: x.roll_number || profile?.studentNumber || '', branch: x.branch || profile?.department || '', eventId: x.event_id, regStatus: x.status, registeredOn: String(x.registered_at).slice(0, 10), event: eventById.get(x.event_id) }))
     .filter((x) => x.event);
   // Active registrations for events that still run. Cancelled events and cancelled registrations are listed separately
   // (history is kept; nothing is hidden or deleted).

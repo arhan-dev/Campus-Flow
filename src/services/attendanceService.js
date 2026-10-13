@@ -42,3 +42,15 @@ export function extractCode(text) {
   } catch { /* not a link: treat as a typed code */ }
   return raw;
 }
+
+// Organizer scans a student's registration pass; the database validates ownership and marks entry.
+export async function admitRegistration(registrationId) {
+  return unwrap(await supabase.rpc('organizer_admit_registration', { p_registration_id: registrationId }), 'Could not admit this registration.');
+}
+export function extractRegistrationId(text) {
+  const raw = String(text || '').trim();
+  const prefix = 'CAMPUSFLOW-ENTRY:';
+  if (raw.startsWith(prefix)) return raw.slice(prefix.length).trim();
+  try { const url = new URL(raw); const id = url.searchParams.get('registration'); if (id) return id; } catch { /* plain payload */ }
+  return '';
+}

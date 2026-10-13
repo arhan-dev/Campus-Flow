@@ -10,7 +10,7 @@ export async function fetchCampusRaw(userId) {
     supabase.from('events').select(EVENT_SELECT).order('event_date'),
     supabase.from('event_seat_counts').select('event_id, registered_count'),
     supabase.from('event_live_status').select('event_id, live_status'),
-    supabase.from('event_registrations').select('id, event_id, student_id, status, registered_at'),
+    supabase.from('event_registrations').select('id, event_id, student_id, status, registered_at, full_name, roll_number, branch'),
     supabase.from('profiles').select('id, full_name, email, role, status, department_id, year_of_study, phone, student_number, avatar_url, department:departments(id,name)'),
     supabase.from('attendance').select('event_id, student_id, status, method, marked_at'),
     supabase.from('certificates').select('*'),

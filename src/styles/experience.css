@@ -1109,3 +1109,65 @@ main {
     line-height: 1.7;
   }
 }
+
+
+/* Notification dropdown contrast and viewport safety — global dashboard fix */
+.notif-panel {
+  color: #edf3fc !important;
+  background: rgba(11, 24, 41, 0.98) !important;
+  border: 1px solid rgba(148, 163, 184, 0.24) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48) !important;
+  isolation: isolate;
+}
+.notif-panel .dropdown-header {
+  background: rgba(11, 24, 41, 0.98) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+.notif-panel .dropdown-header h2,
+.notif-panel .notif-title,
+.notif-panel .notif-title a,
+.notif-panel .notif-text,
+.notif-panel .notif-time,
+.notif-panel .notif-empty,
+.notif-panel .link-btn,
+.notif-panel .notif-footer {
+  color: #edf3fc !important;
+}
+.notif-panel .notif-list li,
+.notif-panel .notif-list li.is-unread {
+  background: rgba(20, 35, 57, 0.96) !important;
+  border-color: rgba(148, 163, 184, 0.15) !important;
+}
+.notif-panel .notif-list li.is-unread {
+  box-shadow: inset 3px 0 0 #22c7e6;
+}
+.notif-panel .notif-title a:hover,
+.notif-panel .link-btn:hover,
+.notif-panel .notif-footer:hover {
+  color: #67e8f9 !important;
+}
+.notif-panel .notif-footer {
+  display: block;
+  background: rgba(11, 24, 41, 0.98) !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.16) !important;
+}
+.notif-panel .notif-dot { background: transparent; }
+.notif-panel .is-unread .notif-dot { background: #22c7e6 !important; }
+.notif-panel .link-btn:disabled { opacity: 0.45; }
+@media (max-width: 560px) {
+  .topbar .notif-panel {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    top: 76px !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: calc(100dvh - 96px) !important;
+    overflow-y: auto !important;
+    z-index: 9999 !important;
+  }
+}
+
+.stat-card-link { display: block; color: inherit; text-decoration: none; cursor: pointer; }
+.stat-card-link:hover, .stat-card-link:focus-visible { color: inherit; text-decoration: none; outline: 2px solid rgba(129, 140, 248, 0.55); outline-offset: 3px; }
+.stat-card-hint { display: inline-block; margin-top: 10px; color: #67e8f9; font-size: 12px; font-weight: 700; }
