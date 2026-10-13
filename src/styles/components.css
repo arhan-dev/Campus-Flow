@@ -2122,3 +2122,13 @@
     transition: none;
   }
 }
+
+
+/* CampusFlow fixes: readable navigation states and viewport-safe notifications. */
+.navbar .nav-link:hover,
+.navbar .nav-link:focus-visible { color: #fff !important; background: linear-gradient(135deg, #625cf6, #4f46e5) !important; }
+.navbar .nav-link.is-active { color: #26336d !important; background: #e8edff !important; }
+.navbar .nav-link.is-active:hover { color: #fff !important; background: linear-gradient(135deg, #625cf6, #4f46e5) !important; }
+.topbar .notif-panel { box-sizing: border-box; max-width: min(360px, calc(100vw - 24px)); max-height: min(72vh, 560px); overflow-y: auto; overscroll-behavior: contain; }
+.notif-list { max-height: min(360px, 45vh); overflow-y: auto; overscroll-behavior: contain; }
+@media (max-width: 560px) { .topbar .notif-panel { position: fixed; left: 12px; right: 12px; top: 76px; width: auto; max-width: none; max-height: calc(100dvh - 96px); z-index: 999; } .notif-list { max-height: calc(100dvh - 230px); } }

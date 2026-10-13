@@ -91,7 +91,20 @@ p { color: var(--text-secondary); }
 
 .navbar .nav-link { color: #aebbd0; }
 .navbar .nav-link:hover,
-.navbar .nav-link.is-active { color: #fff; }
+.navbar .nav-link:focus-visible {
+  color: #fff !important;
+  background: linear-gradient(135deg, #625cf6, #4f46e5) !important;
+  outline: 2px solid rgba(129, 140, 248, 0.65);
+  outline-offset: 2px;
+}
+.navbar .nav-link.is-active {
+  color: #26336d !important;
+  background: #e8edff !important;
+}
+.navbar .nav-link.is-active:hover {
+  color: #fff !important;
+  background: linear-gradient(135deg, #625cf6, #4f46e5) !important;
+}
 
 .card,
 .panel,

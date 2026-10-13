@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Layers, Plus, Pencil, Power } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Layers, Plus, Pencil, Power, Search } from 'lucide-react';
 import PageHeader from '../../components/PageHeader';
 import Button from '../../components/Button';
 import Badge from '../../components/Badge';
@@ -10,11 +10,25 @@ import EmptyState from '../../components/EmptyState';
 import useToast from '../../hooks/useToast';
 import useCampusData from '../../hooks/useCampusData';
 import { useCatalog } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 import { createClub, updateClub, setClubActive } from '../../services/campusService';
 
 export default function Clubs() {
   const { clubs, refresh } = useCampusData();
   const { departments } = useCatalog();
+  const { profile } = useAuth();
+  const [search, setSearch] = useState('');
+  const selectedDepartmentId = profile?.departmentId || '';
+  const selectedDepartmentName = profile?.department || '';
+  const departmentClubs = useMemo(() => {
+    const matching = selectedDepartmentId
+      ? clubs.filter((club) => String(club.departmentId || '') === String(selectedDepartmentId))
+      : selectedDepartmentName
+        ? clubs.filter((club) => String(club.department || '').trim().toLowerCase() === selectedDepartmentName.trim().toLowerCase())
+        : [];
+    const term = search.trim().toLowerCase();
+    return term ? matching.filter((club) => `${club.name} ${club.category} ${club.description || ''}`.toLowerCase().includes(term)) : matching;
+  }, [clubs, selectedDepartmentId, selectedDepartmentName, search]);
   const [toast, showToast, closeToast] = useToast();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -77,35 +91,37 @@ export default function Clubs() {
         action={<Button icon={Plus} onClick={startCreate}>Create club</Button>}
       />
 
-      {clubs.length === 0 ? (
-        <section className="card panel">
-          <EmptyState icon={Layers} title="No clubs yet" text="Create the first campus club or committee." actionLabel="Create club" onAction={startCreate} />
-        </section>
-      ) : (
-        <section className="card panel" aria-label="Club list">
+      <section className="card panel" aria-label="Club list">
+        <div className="field club-search">
+          <label htmlFor="club-search">Search clubs in {selectedDepartmentName || 'your department'}</label>
+          <div className="search-input-wrap"><Search size={18} aria-hidden="true" /><input id="club-search" type="search" placeholder="Search club name or category" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+        </div>
+        {!selectedDepartmentId && !selectedDepartmentName ? (
+          <EmptyState icon={Layers} title="Choose your department" text="Select a department in your profile to see the clubs associated with it." />
+        ) : departmentClubs.length === 0 ? (
+          <EmptyState icon={Layers} title={search ? 'No matching clubs' : 'No clubs in this department'} text={search ? 'Try another search term.' : `There are no clubs associated with ${selectedDepartmentName || 'your selected department'} yet.`} actionLabel="Create club" onAction={startCreate} />
+        ) : (
           <div className="table-wrap">
             <table className="table">
               <thead><tr><th>Club</th><th>Category</th><th>Events</th><th>Status</th><th>Actions</th></tr></thead>
               <tbody>
-                {clubs.map((club) => (
+                {departmentClubs.map((club) => (
                   <tr key={club.id}>
                     <td data-label="Club"><strong>{club.name}</strong></td>
                     <td data-label="Category"><Badge variant={String(club.category).toLowerCase()}>{club.category}</Badge></td>
                     <td data-label="Events">{club.eventCount}</td>
                     <td data-label="Status"><span className={`status-pill ${club.status === 'Active' ? 'status-success' : 'status-muted'}`}>{club.status}</span></td>
-                    <td data-label="Actions">
-                      <div className="table-actions">
-                        <Button size="sm" variant="outline" icon={Pencil} onClick={() => startEdit(club)}>Edit</Button>
-                        <Button size="sm" variant="ghost" icon={Power} onClick={() => toggle(club)}>{club.status === 'Active' ? 'Deactivate' : 'Activate'}</Button>
-                      </div>
-                    </td>
+                    <td data-label="Actions"><div className="table-actions">
+                      <Button size="sm" variant="outline" icon={Pencil} onClick={() => startEdit(club)}>Edit</Button>
+                      <Button size="sm" variant="ghost" icon={Power} onClick={() => toggle(club)}>{club.status === 'Active' ? 'Deactivate' : 'Activate'}</Button>
+                    </div></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       <Modal
         open={open}

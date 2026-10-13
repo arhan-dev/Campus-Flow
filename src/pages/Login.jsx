@@ -24,6 +24,9 @@ export default function Login() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [busy, setBusy] = useState(false);
 
+  const profileStatus = String(profile?.status || '').trim().toLowerCase();
+  const profileRole = String(profile?.role || '').trim().toLowerCase();
+
   // Once a signed-in user's profile is known, send them to the right place
   useEffect(() => {
     if (!user || !profile || String(profile.status || '').trim().toLowerCase() !== 'active') return;
@@ -51,18 +54,24 @@ export default function Login() {
     setMessage({ type: '', text: '' });
     if (Object.keys(found).length > 0) return;
     setBusy(true);
-    if (mode === 'login') {
-      const { error } = await signIn(form.email, form.password);
-      if (error) setMessage({ type: 'error', text: error });
-    } else if (mode === 'signup') {
-      const { error, needsConfirmation } = await signUp(form);
-      if (error) setMessage({ type: 'error', text: error });
-      else if (needsConfirmation) { setMessage({ type: 'success', text: 'Account created. Check your email and click the confirmation link, then log in.' }); setMode('login'); }
-    } else {
-      const { error } = await resetPassword(form.email);
-      setMessage(error ? { type: 'error', text: error } : { type: 'success', text: 'If an account exists for that email, a reset link is on its way.' });
+    try {
+      if (mode === 'login') {
+        const { error } = await signIn(form.email, form.password);
+        if (error) setMessage({ type: 'error', text: error });
+      } else if (mode === 'signup') {
+        const { error, needsConfirmation } = await signUp(form);
+        if (error) setMessage({ type: 'error', text: error });
+        else if (needsConfirmation) { setMessage({ type: 'success', text: 'Account created. Check your email and click the confirmation link, then log in.' }); setMode('login'); }
+        else setMessage({ type: 'success', text: 'Account created successfully. You can now continue.' });
+      } else {
+        const { error } = await resetPassword(form.email);
+        setMessage(error ? { type: 'error', text: error } : { type: 'success', text: 'If an account exists for that email, a reset link is on its way.' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: error?.message || 'Something went wrong. Please try again.' });
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   };
 
   if (!configured) {
@@ -74,8 +83,6 @@ export default function Login() {
     );
   }
 
-  const profileStatus = String(profile?.status || '').trim().toLowerCase();
-  const profileRole = String(profile?.role || '').trim().toLowerCase();
   const blocked = user && profile && profileStatus !== 'active';
   const title = { login: 'Welcome back', signup: 'Create your account', forgot: 'Reset your password' }[mode];
   const subtitle = {
