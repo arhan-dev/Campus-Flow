@@ -35,3 +35,9 @@ Use `promote-user.sql` only from the trusted SQL Editor/database-owner context, 
 - Keep RLS enabled on tables containing user or event data.
 - Test policies using real student and organiser sessions before production use.
 - The smoke tests are not a substitute for full end-to-end security testing.
+
+## Production workflow upgrade (migration 008)
+
+After migrations `001` through `007`, run `migrations/008_production_event_workflows.sql` in the Supabase SQL Editor. This migration adds a database-locked registration flow, capacity enforcement for direct table writes, optional waitlisting, waitlist promotion after cancellation, and durable registration/event-change notifications. The frontend now calls `register_for_event` and `cancel_event_registration` so the critical checks happen in one database transaction.
+
+Do not apply migration 008 before 001-007. Review the SQL Editor output for errors, then run the production checklist in `supabase/tests/production_smoke_test.md`. The project cannot be considered production-verified until these checks pass against the deployed Supabase project.

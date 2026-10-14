@@ -179,8 +179,10 @@ export function buildStudentData(raw, catalogEvents, profile) {
     .filter((x) => x.event);
   // Active registrations for events that still run. Cancelled events and cancelled registrations are listed separately
   // (history is kept; nothing is hidden or deleted).
-  const registrations = allRegs.filter((x) => x.regStatus === 'registered' && x.event.status !== 'Cancelled');
-  const registeredIds = registrations.map((x) => x.eventId);
+  const registrations = allRegs.filter((x) => ['registered', 'waitlisted'].includes(x.regStatus) && x.event.status !== 'Cancelled');
+  const confirmedRegistrations = registrations.filter((x) => x.regStatus === 'registered');
+  const waitlisted = registrations.filter((x) => x.regStatus === 'waitlisted');
+  const registeredIds = confirmedRegistrations.map((x) => x.eventId);
   const cancelledRegistrations = allRegs
     .filter((x) => x.regStatus === 'cancelled' || (x.regStatus === 'registered' && x.event.status === 'Cancelled'))
     .map((x) => ({ ...x, reason: x.regStatus === 'cancelled' ? 'You cancelled this registration' : 'The event was cancelled' }))
@@ -222,7 +224,7 @@ export function buildStudentData(raw, catalogEvents, profile) {
   ].sort((a, b) => b.date.localeCompare(a.date));
 
   return {
-    student, registrations, registeredIds, upcoming, completed, cancelledRegistrations,
+    student, registrations, registeredIds, upcoming, completed, cancelledRegistrations, waitlisted,
     attendance, attendedIds, certificates, points, totalPoints,
     feedbackPending, feedbackDone, feedbackDetails, activity,
     notifications, unreadCount: notifications.filter((n) => n.unread).length,

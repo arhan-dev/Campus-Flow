@@ -1,4 +1,5 @@
 import { CalendarDays, Users, Gauge, Star } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import PageHeader from '../../components/PageHeader';
 import StatCard from '../../components/StatCard';
 import EmptyState from '../../components/EmptyState';
@@ -16,7 +17,20 @@ const CATEGORY_COLORS = {
 export default function OrganizerAnalytics() {
   const { categoryNames: CATEGORY_LIST } = useCatalog();
   const data = useCampusData();
-  const events = data.myEvents.filter((e) => !['Draft', 'Pending Approval', 'Rejected', 'Cancelled'].includes(e.lifecycle));
+  const [eventFilter, setEventFilter] = useState('all');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const events = data.myEvents.filter((e) => !['Draft', 'Pending Approval', 'Rejected', 'Cancelled'].includes(e.lifecycle))
+    .filter((e) => eventFilter === 'all' || String(e.id) === eventFilter)
+    .filter((e) => !fromDate || e.date >= fromDate).filter((e) => !toDate || e.date <= toDate);
+  const branchSegments = useMemo(() => {
+    const counts = new Map();
+    data.registrations.filter((r) => r.status === 'Confirmed' && events.some((e) => e.id === r.eventId)).forEach((r) => {
+      const branch = (r.branch || 'Unspecified').trim() || 'Unspecified';
+      counts.set(branch, (counts.get(branch) || 0) + 1);
+    });
+    return [...counts.entries()].map(([label, value], index) => ({ label, value, color: ['var(--cat-technical)','var(--cat-cultural)','var(--cat-sports)','var(--cat-workshop)','var(--cat-hackathon)','var(--cat-competition)'][index % 6] }));
+  }, [data.registrations, events]);
   if (events.length === 0) {
     return (
       <div className="dash-page">
@@ -37,6 +51,14 @@ export default function OrganizerAnalytics() {
     <div className="dash-page">
       <PageHeader homePath="/organizer/dashboard" title="Analytics" text="How your events are performing." crumb="Analytics" />
 
+      <section className="card panel analytics-filters" aria-label="Analytics filters">
+        <div className="form-grid">
+          <div className="field"><label htmlFor="analytics-event">Event</label><select id="analytics-event" value={eventFilter} onChange={(e) => setEventFilter(e.target.value)}><option value="all">All events</option>{data.myEvents.filter((e) => !['Draft','Pending Approval','Rejected','Cancelled'].includes(e.lifecycle)).map((e) => <option key={e.id} value={String(e.id)}>{e.title}</option>)}</select></div>
+          <div className="field"><label htmlFor="analytics-from">From date</label><input id="analytics-from" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} /></div>
+          <div className="field"><label htmlFor="analytics-to">To date</label><input id="analytics-to" type="date" min={fromDate || undefined} value={toDate} onChange={(e) => setToDate(e.target.value)} /></div>
+        </div>
+      </section>
+
       <div className="grid grid-stats">
         <StatCard label="Events" value={events.length} note="Approved, open or completed" tone="primary" icon={CalendarDays} />
         <StatCard label="Registrations" value={totalRegistered.toLocaleString('en-IN')} tone="secondary" icon={Users} />
@@ -54,6 +76,12 @@ export default function OrganizerAnalytics() {
         <section className="card panel" aria-labelledby="cat-dist">
           <h2 id="cat-dist">Event categories</h2>
           <DonutChart segments={categories} ariaLabel={`Events by category: ${categories.map((c) => `${c.label} ${c.value}`).join(', ')}`} />
+        </section>
+
+        <section className="card panel" aria-labelledby="branch-dist">
+          <h2 id="branch-dist">Participation by branch</h2>
+          <p className="panel-sub">Confirmed registrations in the selected events</p>
+          <DonutChart segments={branchSegments} ariaLabel={`Participation by branch: ${branchSegments.map((b) => `${b.label} ${b.value}`).join(', ')}`} />
         </section>
 
         <section className="card panel" aria-labelledby="att-by-event">

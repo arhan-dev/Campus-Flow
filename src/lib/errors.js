@@ -2,6 +2,10 @@
 // Database rules raise errors that start with a code such as "CF_EVENT_FULL: ..." (see the SQL migration).
 const CODE_MESSAGES = {
   CF_EVENT_FULL: 'This event is full. No seats are left.',
+  CF_DUPLICATE_REGISTRATION: 'You already have an active registration for this event.',
+  CF_BRANCH_NOT_ELIGIBLE: 'This event is restricted to selected branches.',
+  CF_BRANCH_PROFILE_MISMATCH: 'Choose the branch saved in your student profile.',
+  CF_REGISTRATION_DETAILS_REQUIRED: 'Full name, roll number and branch are required.',
   CF_REGISTRATION_CLOSED: 'Registration is not open for this event.',
   CF_DEADLINE_PASSED: 'The registration deadline for this event has passed.',
   CF_EVENT_ENDED: 'This event has already taken place.',

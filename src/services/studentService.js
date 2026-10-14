@@ -23,23 +23,19 @@ export async function fetchStudentRaw(userId) {
 
 // Registers the signed-in student. The database re-checks everything: event open, deadline, capacity, duplicates.
 export async function registerForEvent(eventId, studentId, details = {}) {
-  const existing = unwrap(
-    await supabase.from('event_registrations').select('id, status').eq('event_id', eventId).eq('student_id', studentId).maybeSingle(),
-    'Could not check your registration.',
-  );
-  if (existing) {
-    if (existing.status === 'registered') throw new Error('You are already registered for this event.');
-    unwrap(await supabase.from('event_registrations').update({ status: 'registered', full_name: details.fullName, roll_number: details.rollNumber, branch: details.branch }).eq('id', existing.id), 'Could not register you for this event.');
-    return;
-  }
-  unwrap(await supabase.from('event_registrations').insert({ event_id: eventId, student_id: studentId, full_name: details.fullName, roll_number: details.rollNumber, branch: details.branch }), 'Could not register you for this event.');
+  // One database transaction locks the event row, validates the deadline/branch/capacity,
+  // prevents duplicates, and returns either registered or waitlisted.
+  const result = unwrap(await supabase.rpc('register_for_event', {
+    p_event_id: eventId,
+    p_full_name: details.fullName,
+    p_roll_number: details.rollNumber,
+    p_branch: details.branch,
+  }), 'Could not register you for this event.');
+  return result;
 }
 
 export async function cancelRegistration(eventId, studentId) {
-  unwrap(
-    await supabase.from('event_registrations').update({ status: 'cancelled' }).eq('event_id', eventId).eq('student_id', studentId),
-    'Could not cancel your registration.',
-  );
+  unwrap(await supabase.rpc('cancel_event_registration', { p_event_id: eventId }), 'Could not cancel your registration.');
 }
 
 export async function submitFeedback(eventId, studentId, { ratings, comments }) {

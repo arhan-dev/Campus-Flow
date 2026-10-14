@@ -85,10 +85,10 @@ function EventDetailsContent({ id }) {
     setRegisterError('');
     try {
       if (!registrationDetails.fullName.trim() || !registrationDetails.rollNumber.trim() || !registrationDetails.branch.trim()) throw new Error('Enter your full name, roll number and branch.');
-      await registerForEvent(event.id, profile.id, { fullName: registrationDetails.fullName.trim(), rollNumber: registrationDetails.rollNumber.trim(), branch: registrationDetails.branch.trim() });
+      const result = await registerForEvent(event.id, profile.id, { fullName: registrationDetails.fullName.trim(), rollNumber: registrationDetails.rollNumber.trim(), branch: registrationDetails.branch.trim() });
       await Promise.all([refresh(), refreshStudent()]);
       setModal(null);
-      setToast('Registration successful! Your entry QR pass is available in My Events.');
+      setToast(result?.status === 'waitlisted' ? 'The event is full. You have been added to the waitlist.' : 'Registration successful! Your entry QR pass is available in My Events.');
     } catch (e) {
       setRegisterError(e.message);
       refresh(); // the seat count may have changed (for example the event just filled up)

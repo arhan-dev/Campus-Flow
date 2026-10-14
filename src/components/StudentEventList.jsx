@@ -8,7 +8,7 @@ import { dateParts, formatDate } from '../lib/dates';
 export default function StudentEventList({ registrations, attendedIds = [], compact = false, onCancel }) {
   return (
     <ul className="event-rows student-events">
-      {registrations.map(({ event, registeredOn, reason }) => {
+      {registrations.map(({ event, registeredOn, reason, regStatus }) => {
         const { day, month } = dateParts(event.date);
         const done = event.status === 'Completed';
         const cancelledEvent = event.status === 'Cancelled';
@@ -28,7 +28,7 @@ export default function StudentEventList({ registrations, attendedIds = [], comp
                 ? <Badge variant="cancelled" dot>Event cancelled</Badge>
                 : done
                 ? <Badge variant={attended ? 'present' : 'completed'} dot>{attended ? 'Attended' : 'Completed'}</Badge>
-                : <Badge variant="approved" dot>Registered</Badge>}
+                : <Badge variant={regStatus === 'waitlisted' ? 'warning' : 'approved'} dot>{regStatus === 'waitlisted' ? 'Waitlisted' : 'Registered'}</Badge>}
             </div>
             <Button to={`/events/${event.id}`} variant="outline" size="sm" className="row-action">View Event</Button>
             {onCancel && !done && !cancelledEvent && !attended && event.status !== 'Closed' && (
