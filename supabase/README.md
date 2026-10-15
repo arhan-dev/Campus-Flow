@@ -9,6 +9,9 @@ For a new Supabase project, run these files in the SQL Editor in this exact orde
 3. `migrations/003_section8_hardening.sql`
 4. `migrations/004_event_organizer_model.sql`
 5. `migrations/005_lock_profile_roles.sql`
+6. `migrations/006_event_branch_and_entry_qr.sql`
+7. `migrations/007_organizer_branch_management.sql`
+8. `migrations/008_production_event_workflows.sql`
 
 Stop if any migration reports an error. Do not continue to later migrations until the error is resolved.
 
@@ -38,6 +41,6 @@ Use `promote-user.sql` only from the trusted SQL Editor/database-owner context, 
 
 ## Production workflow upgrade (migration 008)
 
-After migrations `001` through `007`, run `migrations/008_production_event_workflows.sql` in the Supabase SQL Editor. This migration adds a database-locked registration flow, capacity enforcement for direct table writes, optional waitlisting, waitlist promotion after cancellation, and durable registration/event-change notifications. The frontend now calls `register_for_event` and `cancel_event_registration` so the critical checks happen in one database transaction.
+For a brand-new Supabase project, run migrations `001` through `008` in numeric order, one file at a time. Do not skip migrations or run them out of order. Migration 008 includes the final compatible registration guard and a single registration notification trigger. It adds atomic registration, capacity enforcement, optional waitlisting, waitlist promotion on cancellation, and event-change notifications. The frontend calls `register_for_event` and `cancel_event_registration` so critical checks run in the database.
 
-Do not apply migration 008 before 001-007. Review the SQL Editor output for errors, then run the production checklist in `supabase/tests/production_smoke_test.md`. The project cannot be considered production-verified until these checks pass against the deployed Supabase project.
+After all eight migrations complete successfully, optionally run `seed.sql`, then run `tests/final_model_tests.sql` and follow `tests/production_smoke_test.md`. A successful SQL run is not a substitute for verifying real student/organizer sessions and the deployed frontend.

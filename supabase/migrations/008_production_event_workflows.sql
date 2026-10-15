@@ -17,7 +17,8 @@ declare
   v_count integer;
   v_old_registered boolean := false;
 begin
-  if auth.uid() is not null then
+  if auth.uid() is not null
+     and current_setting('campusflow.waitlist_promotion', true) is distinct from 'on' then
     if not public.is_student() or new.student_id <> auth.uid() then
       raise exception 'CF_FORBIDDEN: Only students can manage their own registrations.';
     end if;
@@ -40,7 +41,8 @@ begin
   if new.status in ('registered','waitlisted') and (length(trim(coalesce(new.full_name,''))) = 0 or length(trim(coalesce(new.roll_number,''))) = 0 or length(trim(coalesce(new.branch,''))) = 0) then
     raise exception 'CF_REGISTRATION_DETAILS_REQUIRED: Full name, roll number and branch are required.';
   end if;
-  if new.status in ('registered','waitlisted') then
+  if new.status in ('registered','waitlisted')
+     and current_setting('campusflow.waitlist_promotion', true) is distinct from 'on' then
     if not public.is_published_status(v_event.status) or v_event.status in ('registration_closed','completed','cancelled') then
       raise exception 'CF_REGISTRATION_CLOSED: Registration is not open for this event.';
     end if;
@@ -118,7 +120,9 @@ begin
   if v_reg.status='registered' then
     select * into v_next from public.event_registrations where event_id=p_event_id and status='waitlisted' order by registered_at, id for update skip locked limit 1;
     if found then
+      perform set_config('campusflow.waitlist_promotion', 'on', true);
       update public.event_registrations set status='registered', updated_at=now() where id=v_next.id;
+      perform set_config('campusflow.waitlist_promotion', 'off', true);
       insert into public.notifications(user_id,title,message,type,related_event_id)
         values(v_next.student_id,'A seat is available', 'You have been moved from the waitlist into a confirmed place for '||v_event.title||'.','registration',p_event_id);
     end if;
@@ -176,3 +180,126 @@ for each row execute function public.notify_event_changes();
 -- Security/performance indexes for common real-world queries.
 create index if not exists registrations_active_event_idx on public.event_registrations(event_id) where status='registered';
 create index if not exists notifications_user_created_idx on public.notifications(user_id, created_at desc);
+
+
+-- FINAL COMPATIBILITY FIXES (fresh-install definition)
+-- The earlier guard_registration() used to raise CF_EVENT_FULL before the
+-- details trigger could convert a registration to waitlisted. Keep the original
+-- ownership, event-state and active-student checks, but let this migration's
+-- guard_registration_write() be the single authority for capacity/waitlisting.
+create or replace function public.guard_registration()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_event public.events%rowtype;
+  v_live text;
+  v_uid uuid := auth.uid();
+  v_student_actor boolean := false;
+  v_becomes_registered boolean := false;
+  v_is_promotion boolean := false;
+begin
+  if tg_op = 'UPDATE' then
+    if new.event_id is distinct from old.event_id or new.student_id is distinct from old.student_id then
+      raise exception 'CF_FORBIDDEN: A registration cannot be moved to another event or student.';
+    end if;
+    if v_uid is not null and v_uid = old.student_id and not public.is_admin() and not public.owns_event(old.event_id) then
+      v_student_actor := true;
+      if new.status not in ('registered', 'waitlisted', 'cancelled') then
+        raise exception 'CF_FORBIDDEN: Students can only register, waitlist, or cancel their own registration.';
+      end if;
+      new.registered_at := old.registered_at;
+    end if;
+    v_is_promotion := old.status = 'waitlisted' and new.status = 'registered'
+      and current_setting('campusflow.waitlist_promotion', true) = 'on';
+  end if;
+
+  if tg_op = 'UPDATE' and v_student_actor and new.status = 'cancelled' and old.status is distinct from 'cancelled' then
+    select * into v_event from public.events where id = old.event_id;
+    if found and v_event.status <> 'cancelled' and public.compute_event_status(v_event) in ('ongoing', 'completed') then
+      raise exception 'CF_CANCEL_NOT_ALLOWED: A registration cannot be cancelled once the event has started.';
+    end if;
+    if exists (select 1 from public.attendance a where a.event_id = old.event_id and a.student_id = old.student_id and a.status = 'present') then
+      raise exception 'CF_CANCEL_NOT_ALLOWED: A student marked present cannot cancel this registration.';
+    end if;
+  end if;
+
+  if tg_op = 'INSERT' then
+    v_becomes_registered := new.status = 'registered';
+  else
+    v_becomes_registered := new.status = 'registered' and old.status is distinct from 'registered';
+  end if;
+
+  if v_becomes_registered then
+    select * into v_event from public.events where id = new.event_id for update;
+    if not found then raise exception 'CF_EVENT_NOT_FOUND: This event does not exist.'; end if;
+    if v_event.status = 'cancelled' then raise exception 'CF_EVENT_CANCELLED: This event was cancelled.'; end if;
+    if not exists (select 1 from public.profiles p where p.id = new.student_id and p.role = 'student' and p.status = 'active') then
+      raise exception 'CF_NOT_STUDENT: Only active student accounts can register for events.';
+    end if;
+    if v_is_promotion then
+      if v_event.event_date < public.campus_today() or v_event.status in ('ongoing','completed','rejected','draft','pending_approval') then
+        raise exception 'CF_EVENT_ENDED: This waitlisted seat can no longer be promoted.';
+      end if;
+    else
+      if v_event.status not in ('registration_open') then
+        raise exception 'CF_REGISTRATION_CLOSED: Registration is not open for this event.';
+      end if;
+      v_live := public.compute_event_status(v_event);
+      if v_live = 'completed' then
+        raise exception 'CF_EVENT_ENDED: This event has already taken place.';
+      elsif v_live = 'ongoing' then
+        raise exception 'CF_REGISTRATION_CLOSED: Registration closed when the event started.';
+      elsif v_live = 'registration_closed' then
+        raise exception 'CF_DEADLINE_PASSED: The registration deadline has passed.';
+      elsif v_live <> 'registration_open' then
+        raise exception 'CF_REGISTRATION_NOT_OPEN: Registration is not open for this event.';
+      end if;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+-- One notification trigger only. Replace the legacy handler with support for
+-- waitlist entry and promotion, preventing duplicate messages from two triggers.
+create or replace function public.on_registration_created()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_title text;
+begin
+  select title into v_title from public.events where id = new.event_id;
+  if tg_op = 'INSERT' then
+    if new.status = 'waitlisted' then
+      perform public.push_notification(new.student_id, 'Added to waitlist', 'You are on the waitlist for ' || coalesce(v_title, 'this event') || '.', 'registration', new.event_id);
+    elsif new.status = 'registered' then
+      perform public.push_notification(new.student_id, 'Registration confirmed', 'You are registered for ' || coalesce(v_title, 'this event') || '.', 'registration', new.event_id);
+    end if;
+  elsif new.status is distinct from old.status then
+    if new.status = 'registered' and old.status = 'waitlisted' then
+      perform public.push_notification(new.student_id, 'Registration confirmed', 'A seat is confirmed for ' || coalesce(v_title, 'this event') || '.', 'registration', new.event_id);
+    elsif new.status = 'cancelled' and auth.uid() is not distinct from new.student_id then
+      perform public.push_notification(new.student_id, 'Registration cancelled', 'Your registration for ' || coalesce(v_title, 'this event') || ' was cancelled.', 'registration', new.event_id);
+    elsif new.status = 'waitlisted' and old.status is distinct from 'waitlisted' then
+      perform public.push_notification(new.student_id, 'Added to waitlist', 'You are on the waitlist for ' || coalesce(v_title, 'this event') || '.', 'registration', new.event_id);
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists registrations_notify_change on public.event_registrations;
+-- Recreate the single existing trigger explicitly, for deterministic fresh setup.
+drop trigger if exists registrations_notify on public.event_registrations;
+create trigger registrations_notify
+  after insert or update of status on public.event_registrations
+  for each row execute function public.on_registration_created();
+
+-- Permit the secured cancellation RPC to promote another student's waitlist row.
+-- The transaction-local flag is set only by cancel_event_registration().
